@@ -1,0 +1,8 @@
+.Sidebar {
+  bottom: 0;
+  overflow-y: scroll;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 1;
+}

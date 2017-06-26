@@ -3,16 +3,29 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "bulma": "^0.4.2",
+    "get-pixels": "^3.3.0",
+    "immutable": "^3.8.1",
+    "keycode": "^2.1.9",
     "react": "^15.6.1",
-    "react-dom": "^15.6.1"
+    "react-dom": "^15.6.1",
+    "react-redux": "^5.0.5",
+    "redux": "^3.7.0",
+    "web3": "^0.19.0"
   },
   "devDependencies": {
-    "react-scripts": "1.0.7"
+    "babel-cli": "^6.24.1",
+    "babel-preset-flow": "^6.23.0",
+    "flow-bin": "^0.48.0",
+    "react-scripts": "1.0.7",
+    "redux-devtools": "^3.4.0"
   },
   "scripts": {
+    "upload": "node src/scripts/uploader",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "flow": "flow"
   }
 }
