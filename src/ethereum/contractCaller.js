@@ -43,7 +43,7 @@ class ContractCaller {
     });
 
     const events = contract.allEvents({
-      fromBlock: 412133, //web3.eth.blockNumber - 10000,
+      fromBlock: 412133,
       toBlock: "latest",
     });
     events.watch(function(err, log) {
@@ -117,7 +117,7 @@ class ContractCaller {
   }
 
   selectPixel(pixel: Pixel): void {
-    if (pixel.x < 0 || pixel.y < 0 || pixel.x > GRID_SIZE || pixel.y > GRID_SIZE) {
+    if (pixel.x < 0 || pixel.y < 0 || pixel.x >= GRID_SIZE || pixel.y >= GRID_SIZE) {
       return;
     }
     if (store.getState().get('selectedPixel')) {
