@@ -125,6 +125,7 @@ function loadImage() {
     ctx.fillRect(0, 0, 1000, 1000);
     ctx.drawImage(image, 0, 0);
     store.dispatch({ type: 'SET_IMAGE', image: canvas });
+    store.dispatch({ type: 'RESIZE' });
   };
 }
 loadImage();
