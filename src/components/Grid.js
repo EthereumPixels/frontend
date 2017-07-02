@@ -46,12 +46,23 @@ class Grid extends Component<void, Props, void> {
     store.dispatch({ type: 'PIXEL_HOVER', ...coords });
   };
 
-  _handleMouseDrag = (deltaX: number, deltaY: number): void => {
-    store.dispatch({ type: 'SCROLL', dx: -deltaX, dy: -deltaY });
+  _handleMouseDrag = (
+    elemX: number,
+    elemY: number,
+    deltaX: number,
+    deltaY: number,
+  ): void => {
+    store.dispatch({ type: 'MOVE', dx: -deltaX, dy: -deltaY });
   };
 
-  _handleWheel = (deltaX: number, deltaY: number): void => {
-    store.dispatch({ type: 'SCROLL', dx: deltaX, dy: deltaY });
+  _handleWheel = (
+    elemX: number,
+    elemY: number,
+    deltaX: number,
+    deltaY: number,
+  ): void => {
+    const { x, y } = this._convertElementFrameToImageFrame(elemX, elemY);
+    store.dispatch({ type: 'ZOOM', dx: deltaX, dy: deltaY, x, y });
   };
 
   _redraw = (): void => {
@@ -92,7 +103,6 @@ class Grid extends Component<void, Props, void> {
         <div className="Grid">
           <canvas
             className="Grid-canvas"
-            key={this.props.zoom}
             ref="canvas"
             height={this.props.height}
             width={this.props.width}

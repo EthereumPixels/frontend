@@ -8,7 +8,12 @@ type MousePointFunction = (
   y: number, // Y coordinate of the click in DOM element frame
 ) => void;
 
-type MouseDeltaFunction = (deltaX: number, deltaY: number) => void;
+type MouseDeltaFunction = (
+  x: number,
+  y: number,
+  deltaX: number,
+  deltaY: number,
+) => void;
 
 type Props = {
   children?: React.Element<*>,
@@ -35,11 +40,14 @@ class Grid extends Component<void, Props, State> {
     this.disableNextClick = false;
   }
 
-  _convertDocumentFrameToElementFrame(x: number, y: number): Array<number> {
+  _convertDocumentFrameToElementFrame(
+    x: number,
+    y: number,
+  ): { x: number, y:  number } {
     const rect = this.refs.zone.getBoundingClientRect();
     x -= rect.left;
     y -= rect.top;
-    return [ x, y ];
+    return { x, y };
   }
 
   _handleClick = (event: SyntheticMouseEvent): void => {
@@ -48,11 +56,12 @@ class Grid extends Component<void, Props, State> {
       return;
     }
 
+    const { x, y } = this._convertDocumentFrameToElementFrame(
+      event.clientX,
+      event.clientY,
+    );
     if (this.props.onClick) {
-      this.props.onClick.apply(
-        null,
-        this._convertDocumentFrameToElementFrame(event.clientX, event.clientY),
-      );
+      this.props.onClick(x, y);
     }
   };
 
@@ -67,11 +76,9 @@ class Grid extends Component<void, Props, State> {
   };
 
   _handleMouseMove = (event: SyntheticMouseEvent): void => {
+    const { x, y } = this._convertDocumentFrameToElementFrame(event.clientX, event.clientY);
     if (this.props.onMouseMove) {
-      this.props.onMouseMove.apply(
-        null,
-        this._convertDocumentFrameToElementFrame(event.clientX, event.clientY),
-      );
+      this.props.onMouseMove(x, y);
     }
     if (!this.state.isDragging) {
       return;
@@ -80,7 +87,7 @@ class Grid extends Component<void, Props, State> {
     if (this.props.onMouseDrag) {
       const deltaX = event.clientX - this.lastX;
       const deltaY = event.clientY - this.lastY;
-      this.props.onMouseDrag(deltaX, deltaY);
+      this.props.onMouseDrag(x, y, deltaX, deltaY);
     }
     this.lastX = event.clientX;
     this.lastY = event.clientY;
@@ -90,9 +97,29 @@ class Grid extends Component<void, Props, State> {
     if (this.state.isDragging) {
       return;
     }
+    const { x, y } = this._convertDocumentFrameToElementFrame(
+      event.clientX,
+      event.clientY,
+    );
     if (this.props.onWheel) {
-      this.props.onWheel(event.deltaX, event.deltaY);
+      this.props.onWheel(x, y, event.deltaX, event.deltaY);
     }
+  }
+
+  componentDidMount(): void {
+    window.oncontextmenu = (event) => {
+      return event.target === this.refs.zone || this.state.isDragging
+        ? false
+        : null;
+    };
+    window.onmousemove = this._handleMouseMove;
+    window.onmouseup = this._handleMouseUp;
+  }
+
+  componentWillUnmount(): void {
+    window.oncontextmenu = null;
+    window.onmousemove = null;
+    window.onmouseup = null;
   }
 
   render() {
@@ -110,8 +137,6 @@ class Grid extends Component<void, Props, State> {
         style={{ cursor }}
         onClick={this._handleClick}
         onMouseDown={this._handleMouseDown}
-        onMouseMove={this._handleMouseMove}
-        onMouseUp={this._handleMouseUp}
         onWheel={this._handleWheel}
       >
         {this.props.children}

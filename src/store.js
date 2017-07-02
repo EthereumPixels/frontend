@@ -4,7 +4,7 @@ import { Record } from 'immutable'
 import { createStore } from 'redux'
 import colorConversion from './colorConversion'
 
-import { GRID_SIZE } from './configs'
+import { DEFAULT_ZOOM, GRID_SIZE, MAX_ZOOM, MIN_ZOOM } from './configs'
 
 let pixelImageData;
 
@@ -19,15 +19,40 @@ const State = Record({
   hoverY: null, // Y coordinate of the mouseover pixel in image frame
   selectedPixel: null,
   sourceImage: null, // HTMLCanvasElement that contains the unmodified image
-  zoom: 4,
+  zoom: DEFAULT_ZOOM,
 });
 
-function applyZoom(state: State, factor: number): State {
-  const zoom = state.get('zoom') * factor;
-  if (zoom > 8 || zoom < 0.25) {
+// If zoom was performed using a mouse, attempt to keep the point under the
+// pointer invariant after the zoom. This is similar to the behavior of
+// Google Maps
+function applyZoomInvariant(state: State, factor: number, x: number, y: number) {
+  const currCenterX = state.get('centerX');
+  const currCenterY = state.get('centerY');
+  const dx = x - currCenterX;
+  const dy = y - currCenterY;
+  const centerX = currCenterX + dx * factor - dx;
+  const centerY = currCenterY + dy * factor - dy;
+  return state.merge({ centerX, centerY });
+}
+
+function applyZoom(state: State, factor: number, x?: number, y?: number): State {
+  if (factor === 1) {
     return state;
   }
-  return state.merge({ zoom });
+  const zoom = state.get('zoom');
+  if (zoom === MAX_ZOOM && factor > 1) {
+    return state;
+  }
+  if (zoom === MIN_ZOOM && factor < 1) {
+    return state;
+  }
+  let newZoom = state.get('zoom') * factor;
+  newZoom = Math.min(MAX_ZOOM, newZoom);
+  newZoom = Math.max(MIN_ZOOM, newZoom);
+  const newState = state.merge({ zoom: newZoom });
+  return (typeof x === 'undefined' || typeof y === 'undefined')
+    ? newState
+    : applyZoomInvariant(newState, factor, x, y);
 }
 
 function updateDimensions(state: State, headerHeight: number): State {
@@ -56,11 +81,6 @@ function reduce(state: State = new State(), action) {
     }
     case 'PIXEL_SELECT': {
       const { pixel } = action;
-      // console.log(pixel);
-      // const zoom = state.get('zoom');
-      // if (zoom < 2) {
-      //   return applyZoom(state, 2);
-      // }
       return state.merge({ selectedPixel: pixel });
     }
     case 'PIXEL_HOVER': {
@@ -70,17 +90,22 @@ function reduce(state: State = new State(), action) {
     case 'RESIZE': {
       return updateDimensions(state, state.get('headerHeight'));
     }
-    case 'SCROLL': {
-      const { dx, dy } = action;
+    case 'MOVE': {
+      const currCenterX = state.get('centerX');
+      const currCenterY = state.get('centerY');
+      let { dx, dy } = action;
+      if ((currCenterX < 0 && dx < 0) || (currCenterX > GRID_SIZE && dx > 0)) {
+        dx = 0;
+      }
+      if ((currCenterY < 0 && dy < 0) || (currCenterY > GRID_SIZE && dy > 0)) {
+        dy = 0;
+      }
       if (dx === 0 && dy === 0) {
         return state;
       }
       const zoom = state.get('zoom');
-      const centerX = state.get('centerX') + dx / zoom;
-      const centerY = state.get('centerY') + dy / zoom;
-      if (centerX < 0 || centerY < 0 || centerX > GRID_SIZE || centerY > GRID_SIZE) {
-        return state;
-      }
+      const centerX = currCenterX + dx / zoom;
+      const centerY = currCenterY + dy / zoom;
       return state.merge({ centerX, centerY });
     }
     case 'SET_HEADER': {
@@ -89,8 +114,18 @@ function reduce(state: State = new State(), action) {
     case 'SET_IMAGE': {
       return state.merge({ sourceImage: action.image });
     }
+    case 'ZOOM': {
+      const { dy, x, y } = action;
+      if (!dy) {
+        return state;
+      }
+      const a = Math.abs(dy) / 100;
+      const b = 1.0 + a;
+      const factor = dy < 0 ? b : 1/b;
+      return applyZoom(state, factor, x, y);
+    }
     case 'ZOOM_IN': {
-      return applyZoom(state, 2);
+      return applyZoom(state, 2.0);
     }
     case 'ZOOM_OUT': {
       return applyZoom(state, 0.5);

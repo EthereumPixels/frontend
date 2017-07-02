@@ -17,17 +17,21 @@ class HotKeys {
       case '=':
         store.dispatch({ type: 'ZOOM_IN' });
         break;
+      case 'a':
       case 'left':
-        store.dispatch({ type: 'SCROLL', dx: -10, dy: 0 });
+        store.dispatch({ type: 'MOVE', dx: -10, dy: 0 });
         break;
+      case 'd':
       case 'right':
-        store.dispatch({ type: 'SCROLL', dx: 10, dy: 0 });
+        store.dispatch({ type: 'MOVE', dx: 10, dy: 0 });
         break;
+      case 'w':
       case 'up':
-        store.dispatch({ type: 'SCROLL', dx: 0, dy: -10 });
+        store.dispatch({ type: 'MOVE', dx: 0, dy: -10 });
         break;
+      case 's':
       case 'down':
-        store.dispatch({ type: 'SCROLL', dx: 0, dy: 10 });
+        store.dispatch({ type: 'MOVE', dx: 0, dy: 10 });
         break;
       default:
         break;
