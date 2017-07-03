@@ -158,7 +158,7 @@ function loadImage() {
   const image = new Image();
   image.src = '/img/place.png';
   image.onload = function() {
-    ctx.fillStyle = '#000000';
+    ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, 1000, 1000);
     ctx.drawImage(image, 0, 0);
     store.dispatch({ type: 'SET_IMAGE', image: canvas });
