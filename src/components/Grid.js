@@ -15,6 +15,7 @@ type Props = {
   centerY: number, // Y coordinate of the camera center in image frame
   gridSize: number,
   height: number,
+  nonce: number,
   sourceImage: ?HTMLCanvasElement,
   width: number,
   zoom: number,
@@ -118,6 +119,7 @@ Grid.propTypes = {
   centerY: PropTypes.number.isRequired,
   gridSize: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
+  nonce: PropTypes.number.isRequired,
   sourceImage: PropTypes.object,
   width: PropTypes.number.isRequired,
   zoom: PropTypes.number.isRequired,

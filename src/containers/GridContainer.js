@@ -8,6 +8,7 @@ const mapStateToProps = (state) => ({
   centerY: state.get('centerY'),
   gridSize: state.get('gridSize'),
   height: state.get('canvasHeight'),
+  nonce: state.get('nonce'),
   sourceImage: state.get('sourceImage'),
   width: state.get('canvasWidth'),
   zoom: state.get('zoom'),

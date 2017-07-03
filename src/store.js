@@ -17,6 +17,7 @@ const State = Record({
   headerHeight: 0,
   hoverX: null, // X coordinate of the mouseover pixel in image frame
   hoverY: null, // Y coordinate of the mouseover pixel in image frame
+  nonce: 0,
   selectedPixel: null,
   sourceImage: null, // HTMLCanvasElement that contains the unmodified image
   zoom: DEFAULT_ZOOM,
@@ -77,7 +78,8 @@ function reduce(state: State = new State(), action) {
       data[2] = b;
       data[3] = 255;
       canvas.getContext('2d').putImageData(pixelImageData, pixel.x, pixel.y);
-      return state.merge({ sourceImage: canvas });
+      const nonce = state.get('nonce') + 1;
+      return state.merge({ sourceImage: canvas, nonce });
     }
     case 'PIXEL_SELECT': {
       const { pixel } = action;
