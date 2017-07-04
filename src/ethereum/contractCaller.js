@@ -72,22 +72,11 @@ class ContractCaller {
     window.contract = contract;
     this.contract = contract;
     this.web3 = web3;
+    this.loading = false;
   }
 
   getAccounts(): Array<string> {
     return this.web3.eth.accounts;
-  }
-
-  populateBlockChainWithCanvas() {
-    const canvas = store.getState().get('sourceImage');
-    const ctx = canvas.getContext('2d');
-    for (let x = 100; x < 104; x++) {
-      for (let y = 100; y < 104; y++) {
-        let [r, g, b] = ctx.getImageData(y, x, 1, 1).data;
-        const color = colorConversion.rgbToDecimal(255 - r, 255  - g, 255 - b);
-        this.contract.setPixelColor(y, x, color, { from: this.web3.eth.coinbase });
-      }
-    }
   }
 
   getPixelColor(pixel: Pixel): Promise<Pixel> {
@@ -117,18 +106,20 @@ class ContractCaller {
   }
 
   selectPixel(pixel: Pixel): void {
+    if (this.loading) {
+      return;
+    }
     if (pixel.x < 0 || pixel.y < 0 || pixel.x >= GRID_SIZE || pixel.y >= GRID_SIZE) {
       return;
     }
-    if (store.getState().get('selectedPixel')) {
-      store.dispatch({ type: 'PIXEL_SELECT', pixel: null });
-      return;
-    }
+    store.dispatch({ type: 'PIXEL_SELECT', pixel });
+    this.loading = true;
     const caller = this;
     caller.getPixelColor(pixel).then(function(pixel) {
       return caller.getPixelOwner(pixel);
     }).then(function(pixel) {
       store.dispatch({ type: 'PIXEL_SELECT', pixel });
+      caller.loading = false;
     });
   }
 }

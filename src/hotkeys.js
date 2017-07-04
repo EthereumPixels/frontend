@@ -33,6 +33,9 @@ class HotKeys {
       case 'down':
         store.dispatch({ type: 'MOVE', dx: 0, dy: 10 });
         break;
+      case 'esc':
+        store.dispatch({ type: 'PIXEL_SELECT', pixel: null });
+        break;
       default:
         break;
     }
