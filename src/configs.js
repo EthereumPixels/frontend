@@ -4,7 +4,7 @@ const CONTRACT_ADDRESS = '0xf797f66b934b54e0ab3a24d2cdfd92f6c9469e4d';
 const DEFAULT_ZOOM = 4.0;
 const DEPLOYED_BLOCK = 412133;
 const GRID_SIZE = 1000;
-const MAX_ZOOM = 8;
+const MAX_ZOOM = 16;
 const MIN_ZOOM = 0.25;
 
 module.exports = {
