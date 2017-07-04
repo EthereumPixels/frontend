@@ -1,8 +1,11 @@
 .Sidebar {
+  background: #fff;
   bottom: 0;
   overflow-y: scroll;
+  padding: 16px;
   position: absolute;
   right: 0;
   top: 0;
+  width: 30%;
   z-index: 1;
 }
