@@ -15,8 +15,7 @@ const State = Record({
   canvasWidth: 0,
   gridSize: GRID_SIZE,
   headerHeight: 0,
-  hoverX: null, // X coordinate of the mouseover pixel in image frame
-  hoverY: null, // Y coordinate of the mouseover pixel in image frame
+  hoverPixel: null,
   nonce: 0,
   selectedPixel: null,
   sourceImage: null, // HTMLCanvasElement that contains the unmodified image
@@ -86,8 +85,8 @@ function reduce(state: State = new State(), action) {
       return state.merge({ selectedPixel: pixel });
     }
     case 'PIXEL_HOVER': {
-      const { x, y } = action;
-      return state.merge({ hoverX: x, hoverY: y });
+      const { pixel } = action;
+      return state.merge({ hoverPixel: pixel });
     }
     case 'RESIZE': {
       return updateDimensions(state, state.get('headerHeight'));

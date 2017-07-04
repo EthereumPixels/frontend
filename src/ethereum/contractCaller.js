@@ -12,6 +12,7 @@ import { GRID_SIZE, CONTRACT_ADDRESS } from '../configs'
 class ContractCaller {
   web3: Web3;
   contract: Object;
+  timerID: ?number;
 
   init() {
     const web3 = new Web3();
@@ -42,6 +43,14 @@ class ContractCaller {
       }
     });
 
+    window.contract = contract;
+    this.contract = contract;
+    this.web3 = web3;
+    this.timerID = null;
+  }
+
+  loadPixels(): void {
+    const { contract } = this;
     const events = contract.allEvents({
       fromBlock: 412133,
       toBlock: "latest",
@@ -68,11 +77,6 @@ class ContractCaller {
           break;
       }
     });
-
-    window.contract = contract;
-    this.contract = contract;
-    this.web3 = web3;
-    this.loading = false;
   }
 
   getAccounts(): Array<string> {
@@ -106,21 +110,22 @@ class ContractCaller {
   }
 
   selectPixel(pixel: Pixel): void {
-    if (this.loading) {
-      return;
-    }
     if (pixel.x < 0 || pixel.y < 0 || pixel.x >= GRID_SIZE || pixel.y >= GRID_SIZE) {
       return;
     }
     store.dispatch({ type: 'PIXEL_SELECT', pixel });
-    this.loading = true;
     const caller = this;
-    caller.getPixelColor(pixel).then(function(pixel) {
-      return caller.getPixelOwner(pixel);
-    }).then(function(pixel) {
-      store.dispatch({ type: 'PIXEL_SELECT', pixel });
-      caller.loading = false;
-    });
+    if (this.timerID) {
+      window.clearTimeout(this.timerID);
+    }
+    window.setTimeout(function() {
+      caller.getPixelColor(pixel).then(function(pixel) {
+        return caller.getPixelOwner(pixel);
+      }).then(function(pixel) {
+        store.dispatch({ type: 'PIXEL_SELECT', pixel });
+        caller.timerID = null;
+      });
+    }, 200);
   }
 }
 

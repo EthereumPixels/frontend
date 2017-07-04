@@ -2,9 +2,10 @@
 
 import type { Pixel } from '../ethereum/Pixel'
 
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
 import MouseZone from './MouseZone'
+import Overlay from './Overlay'
+import PropTypes from 'prop-types'
+import React, { Component } from 'react'
 import contractCaller from '../ethereum/contractCaller'
 import store from '../store'
 
@@ -15,7 +16,9 @@ type Props = {
   centerY: number, // Y coordinate of the camera center in image frame
   gridSize: number,
   height: number,
+  hoverPixel: ?Pixel,
   nonce: number,
+  selectedPixel: ?Pixel,
   sourceImage: ?HTMLCanvasElement,
   width: number,
   zoom: number,
@@ -37,14 +40,34 @@ class Grid extends Component<void, Props, void> {
     return { x, y };
   }
 
+  _convertImageFrameToElementFrame(imageX: number, imageY: number): Pixel {
+    const { centerX, centerY, height, width } = this.props;
+    const factor = this._getScalingFactor();
+    const originX = width / 2 - centerX * factor;
+    const originY = height / 2 - centerY * factor;
+    const x = imageX * factor + originX;
+    const y = imageY * factor + originY;
+    return { x, y };
+  }
+
+  _convertImagePixelToElementPixel(imagePixel?: ?Pixel): ?Pixel {
+    return imagePixel
+      ? this._convertImageFrameToElementFrame(imagePixel.x, imagePixel.y)
+      : null;
+  }
+
   _handleClick = (x: number, y: number): void => {
     const pixel = this._convertElementFrameToImageFrame(x, y);
     contractCaller.selectPixel(pixel);
   };
 
+  _handleMouseLeave = (): void => {
+    store.dispatch({ type: 'PIXEL_HOVER', pixel: null });
+  };
+
   _handleMouseMove = (x: number, y: number): void => {
-    const coords = this._convertElementFrameToImageFrame(x, y);
-    store.dispatch({ type: 'PIXEL_HOVER', ...coords });
+    const pixel = this._convertElementFrameToImageFrame(x, y);
+    store.dispatch({ type: 'PIXEL_HOVER', pixel });
   };
 
   _handleMouseDrag = (
@@ -99,16 +122,23 @@ class Grid extends Component<void, Props, void> {
         onClick={this._handleClick}
         onMouseDrag={this._handleMouseDrag}
         onMouseMove={this._handleMouseMove}
+        onMouseLeave={this._handleMouseLeave}
         onWheel={this._handleWheel}
       >
-        <div className="Grid">
-          <canvas
-            className="Grid-canvas"
-            ref="canvas"
-            height={this.props.height}
-            width={this.props.width}
-          />
-        </div>
+        <Overlay
+          hoverElemPixel={this._convertImagePixelToElementPixel(this.props.hoverPixel)}
+          selectedElemPixel={this._convertImagePixelToElementPixel(this.props.selectedPixel)}
+          pixelSize={this._getScalingFactor()}
+        >
+          <div className="Grid">
+            <canvas
+              className="Grid-canvas"
+              ref="canvas"
+              height={this.props.height}
+              width={this.props.width}
+            />
+          </div>
+        </Overlay>
       </MouseZone>
     );
   }
@@ -119,7 +149,9 @@ Grid.propTypes = {
   centerY: PropTypes.number.isRequired,
   gridSize: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
+  hoverPixel: PropTypes.object,
   nonce: PropTypes.number.isRequired,
+  selectedPixel: PropTypes.object,
   sourceImage: PropTypes.object,
   width: PropTypes.number.isRequired,
   zoom: PropTypes.number.isRequired,

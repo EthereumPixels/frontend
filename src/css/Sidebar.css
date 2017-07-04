@@ -1,6 +1,7 @@
 .Sidebar {
   background: #fff;
   bottom: 0;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   overflow-y: scroll;
   padding: 16px;
   position: absolute;

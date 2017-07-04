@@ -19,6 +19,7 @@ type Props = {
   children?: React.Element<*>,
   onClick?: MousePointFunction,
   onMouseDrag?: MouseDeltaFunction,
+  onMouseLeave?: Function,
   onMouseMove?: MousePointFunction,
   onWheel?: MouseDeltaFunction,
 };
@@ -137,6 +138,7 @@ class Grid extends Component<void, Props, State> {
         style={{ cursor }}
         onClick={this._handleClick}
         onMouseDown={this._handleMouseDown}
+        onMouseLeave={this.props.onMouseLeave}
         onWheel={this._handleWheel}
       >
         {this.props.children}
