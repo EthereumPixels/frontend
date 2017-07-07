@@ -98,6 +98,13 @@ class Sidebar extends Component<void, Props, State> {
           <div className="Sidebar-subheader">Message</div><div>{messageText}</div>
         </Col>
       </Row>,
+      <Row className="Sidebar-row" key="price">
+        <Col xs={12}>
+          <div className="Sidebar-subheader">Price</div><div>
+            {window.web3.fromWei(selectedPixel.price, 'ether')} ETH
+          </div>
+        </Col>
+      </Row>,
     ];
 
     const rightContent = this.state.loading ? null : (

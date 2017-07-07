@@ -87,7 +87,7 @@ class ContractCaller {
     return new Promise((resolve, reject) => {
       this.contract.getUserMessage(user, (err, message) => {
         if (err) {
-          reject(err);
+          return reject(err);
         }
         resolve(message);
       });
@@ -98,10 +98,10 @@ class ContractCaller {
     return new Promise((resolve, reject) => {
       this.contract.getPixelColor(pixel.y, pixel.x, (err, colorBigNum) => {
         if (err) {
-          reject(err);
+          return reject(err);
         }
         if (!colorBigNum) {
-          reject('Color is null');
+          return reject('Color is null');
         }
         const colorInt = parseInt(colorBigNum.valueOf(), 10);
         const color = colorConversion.decimalToHex(colorInt);
@@ -111,11 +111,26 @@ class ContractCaller {
     });
   }
 
+  getPixelPrice(pixel: Pixel): Promise<Pixel> {
+    return new Promise((resolve, reject) => {
+      this.contract.getPixelPrice(pixel.y, pixel.x, (err, price) => {
+        if (err) {
+          return reject(err);
+        }
+        if (!price) {
+          return reject('Price is null');
+        }
+        const newPixel = { ...pixel, price: parseInt(price.valueOf(), 10) };
+        resolve(newPixel);
+      })
+    });
+  }
+
   getPixelOwner(pixel: Pixel): Promise<Pixel> {
     return new Promise((resolve, reject) => {
       this.contract.getPixelOwner(pixel.y, pixel.x, (err, owner) => {
         if (err) {
-          reject(err);
+          return reject(err);
         }
         const newPixel = { ...pixel, owner };
         resolve(newPixel)
@@ -135,6 +150,8 @@ class ContractCaller {
     window.setTimeout(function() {
       caller.getPixelColor(pixel).then(function(pixel) {
         return caller.getPixelOwner(pixel);
+      }).then(function(pixel) {
+        return caller.getPixelPrice(pixel);
       }).then(function(pixel) {
         store.dispatch({ type: 'PIXEL_SELECT', pixel });
         caller.timerID = null;
