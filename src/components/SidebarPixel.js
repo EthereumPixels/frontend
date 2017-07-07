@@ -2,6 +2,7 @@
 
 import type { Pixel } from '../ethereum/Pixel'
 
+import { Col, Grid, Row } from 'react-bootstrap'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import contractCaller from '../ethereum/contractCaller'
@@ -74,6 +75,7 @@ class Sidebar extends Component<void, Props, State> {
       return;
     }
 
+
     const colorText = selectedPixel.color === '000000' ? 'Not set' : (
       <span>
         #{selectedPixel.color}
@@ -85,24 +87,39 @@ class Sidebar extends Component<void, Props, State> {
 
     const messageText = this.state.message ? this.state.message : 'Not set';
 
-    const content = this.state.loading ? null : (
-      <div>
-        <div className="Sidebar-subheader">Color</div><div>{colorText}</div>
-        <div className="Sidebar-subheader">Owner</div><div>{this.state.owner}</div>
-        <div className="Sidebar-subheader">Message</div><div>{messageText}</div>
-      </div>
+    const content = this.state.loading ? null : [
+      <Row className="Sidebar-row" key="owner">
+        <Col xs={12}>
+          <div className="Sidebar-subheader">Owner</div><div>{this.state.owner}</div>
+        </Col>
+      </Row>,
+      <Row className="Sidebar-row" key="message">
+        <Col xs={12}>
+          <div className="Sidebar-subheader">Message</div><div>{messageText}</div>
+        </Col>
+      </Row>,
+    ];
+
+    const rightContent = this.state.loading ? null : (
+      <Col xs={6}>
+        <div className="Sidebar-subheader">Color</div>
+        <div>{colorText}</div>
+      </Col>
     );
 
     return (
-      <div>
-        <div className="Sidebar-subheader">Location</div>
-        <div className="Sidebar-header">
-          {selectedPixel.x}, {selectedPixel.y}
-        </div>
-        <div>
-          {content}
-        </div>
-      </div>
+      <Grid fluid={true}>
+        <Row>
+          <Col xs={6}>
+            <div className="Sidebar-subheader">Location</div>
+            <div className="Sidebar-header">
+              {selectedPixel.x}, {selectedPixel.y}
+            </div>
+          </Col>
+          {rightContent}
+        </Row>
+        {content}
+      </Grid>
     );
   }
 }

@@ -1,15 +1,20 @@
 .Sidebar {
-  background: #fff;
+  background: rgb(37, 52, 71);
   bottom: 0;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  color: #fff;
   overflow-x: hidden;
   overflow-y: scroll;
-  padding: 16px;
+  padding: 16px 0;
   position: absolute;
   right: 0;
   top: 0;
   width: 30%;
   z-index: 1;
+}
+
+.Sidebar a {
+  color: rgb(240, 80, 125);
 }
 
 .Sidebar-slide-enter {
@@ -33,18 +38,22 @@
 .Sidebar-header {
   font-size: 30px;
   font-weight: bold;
+  line-height: 34px;
 }
 
 .Sidebar-subheader {
-  margin-top: 8px;
   font-size: 10px;
   text-transform: uppercase;
   pointer-events: none;
   user-select: none;
 }
 
+.Sidebar-row {
+  margin-top: 16px;
+}
+
 .Sidebar-colorbox {
-  border: 1px solid #000;
+  border: 1px solid #fff;
   display: inline-block;
   height: 10px;
   margin-left: 4px;
