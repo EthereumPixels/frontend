@@ -18,6 +18,7 @@ const State = Record({
   hoverPixel: null,
   nonce: 0,
   selectedPixel: null,
+  selectedSidebar: null,
   sourceImage: null, // HTMLCanvasElement that contains the unmodified image
   zoom: DEFAULT_ZOOM,
 });
@@ -82,7 +83,13 @@ function reduce(state: State = new State(), action) {
     }
     case 'PIXEL_SELECT': {
       const { pixel } = action;
-      return state.merge({ selectedPixel: pixel });
+      let selectedSidebar = state.get('selectedSidebar');
+      if (pixel) {
+        selectedSidebar = 'pixel';
+      } else if (selectedSidebar === 'pixel') {
+        selectedSidebar = null;
+      }
+      return state.merge({ selectedPixel: pixel, selectedSidebar });
     }
     case 'PIXEL_HOVER': {
       const { pixel } = action;
@@ -108,6 +115,10 @@ function reduce(state: State = new State(), action) {
       const centerX = currCenterX + dx / zoom;
       const centerY = currCenterY + dy / zoom;
       return state.merge({ centerX, centerY });
+    }
+    case 'NAVIGATE_SIDEBAR': {
+      const { sidebar } = action;
+      return state.merge({ selectedSidebar: sidebar });
     }
     case 'SET_HEADER': {
       return updateDimensions(state, action.height);

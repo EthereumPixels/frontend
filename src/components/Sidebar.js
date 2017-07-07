@@ -3,47 +3,51 @@
 import type { Pixel } from '../ethereum/Pixel'
 
 import React, { Component } from 'react'
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import PropTypes from 'prop-types'
-import contractCaller from '../ethereum/contractCaller'
+import SidebarPixel from './SidebarPixel'
 
 import '../css/Sidebar.css'
 
 type Props = {
+  selectedSidebar: string,
+  hoverPixel: ?Pixel,
   selectedPixel: ?Pixel,
 };
 
 class Sidebar extends Component<void, Props, void> {
   render() {
-    const { selectedPixel } = this.props;
-    if (!selectedPixel) {
-      return null;
+    let content = null;
+    switch (this.props.selectedSidebar) {
+      case 'pixel':
+        content = <SidebarPixel {...this.props} />;
+        break;
+      default:
+        break;
     }
 
-    const { owner } = selectedPixel;
-    const ownerText = owner && contractCaller.getAccounts().includes(owner)
-      ? <span>{owner} (You)</span>
-      : owner;
-    return (
-      <div className="Sidebar">
-        <div className="box">
-          <div>
-            ({selectedPixel.x}, {selectedPixel.y})
-          </div>
-          <table className="table">
-            <tbody>
-              <tr><td>Color</td><td>{selectedPixel.color}</td></tr>
-              <tr><td>Owner</td><td>{ownerText}</td></tr>
-              <tr><td>Message</td></tr>
-            </tbody>
-          </table>
-        </div>
+    const sidebar = content ? (
+      <div className="Sidebar" key="sidebar">
+        {content}
       </div>
+    ) : null;
+
+    return (
+      <ReactCSSTransitionGroup
+        transitionEnterTimeout={300}
+        transitionLeaveTimeout={300}
+        transitionName="Sidebar-slide"
+      >
+        {sidebar}
+      </ReactCSSTransitionGroup>
     );
   }
 }
 
 Sidebar.propTypes = {
+  hoverPixel: PropTypes.object,
   selectedPixel: PropTypes.object,
+  selectedSidebar: PropTypes.string,
 };
 
 export default Sidebar
