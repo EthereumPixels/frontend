@@ -2,6 +2,7 @@
   background: #fff;
   bottom: 0;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  overflow-x: hidden;
   overflow-y: scroll;
   padding: 16px;
   position: absolute;
@@ -27,4 +28,25 @@
 .Sidebar-slide-leave.Sidebar-slide-leave-active {
   transform: translateX(100%);
   transition: all 300ms ease;
+}
+
+.Sidebar-header {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.Sidebar-subheader {
+  margin-top: 8px;
+  font-size: 10px;
+  text-transform: uppercase;
+  pointer-events: none;
+  user-select: none;
+}
+
+.Sidebar-colorbox {
+  border: 1px solid #000;
+  display: inline-block;
+  height: 10px;
+  margin-left: 4px;
+  width: 10px;
 }

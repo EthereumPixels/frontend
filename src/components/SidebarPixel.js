@@ -8,34 +8,100 @@ import contractCaller from '../ethereum/contractCaller'
 
 import '../css/Sidebar.css'
 
-export type Props = {
+type Props = {
   hoverPixel: ?Pixel,
   selectedPixel: ?Pixel,
 };
 
-class Sidebar extends Component<void, Props, void> {
-  render() {
+type State = {
+  loading: boolean,
+  message: ?string,
+  owner: ?React.Element<*>,
+};
+
+class Sidebar extends Component<void, Props, State> {
+  props: Props;
+  state: State;
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: true,
+      message: null,
+      owner: null,
+    };
+  }
+
+  _refetch(): void {
     const { selectedPixel } = this.props;
     if (!selectedPixel) {
-      return null;
+      return;
     }
 
     const { owner } = selectedPixel;
-    const ownerText = owner && contractCaller.getAccounts().includes(owner)
-      ? <span>{owner} (You)</span>
-      : owner;
+    if (!owner) {
+      return;
+    }
+
+    const ownerLink = (
+      <a href={'https://rinkeby.etherscan.io/address/' + owner}>{owner}</a>
+    );
+    const ownerText = contractCaller.getAccounts().includes(owner)
+      ? <span>{ownerLink} (You)</span>
+      : ownerLink;
+
+    contractCaller.getUserMessage(owner).then((message) => {
+      this.setState({ message, owner: ownerText, loading: false });
+    });
+  }
+
+  componentDidMount(): void {
+    this._refetch();
+  }
+
+  componentDidUpdate(prevProps: Props, prevState: State): void {
+    const prevPixel = prevProps.selectedPixel;
+    const pixel = this.props.selectedPixel;
+    if (pixel && prevPixel && (pixel.owner !== prevPixel.owner)) {
+      this.setState({ loading: true }, () => {
+        this._refetch();
+      })
+    }
+  }
+
+  render() {
+    const { selectedPixel } = this.props;
+    if (!selectedPixel) {
+      return;
+    }
+
+    const colorText = selectedPixel.color === '000000' ? 'Not set' : (
+      <span>
+        #{selectedPixel.color}
+        <span className="Sidebar-colorbox" style={{
+          backgroundColor: `#${selectedPixel.color}`,
+        }}/>
+      </span>
+    );
+
+    const messageText = this.state.message ? this.state.message : 'Not set';
+
+    const content = this.state.loading ? null : (
+      <div>
+        <div className="Sidebar-subheader">Color</div><div>{colorText}</div>
+        <div className="Sidebar-subheader">Owner</div><div>{this.state.owner}</div>
+        <div className="Sidebar-subheader">Message</div><div>{messageText}</div>
+      </div>
+    );
+
     return (
       <div>
-        <div>
-          ({selectedPixel.x}, {selectedPixel.y})
+        <div className="Sidebar-subheader">Location</div>
+        <div className="Sidebar-header">
+          {selectedPixel.x}, {selectedPixel.y}
         </div>
-        <table className="table">
-          <tbody>
-            <tr><td>Color</td><td>{selectedPixel.color}</td></tr>
-            <tr><td>Owner</td><td>{ownerText}</td></tr>
-            <tr><td>Message</td></tr>
-          </tbody>
-        </table>
+        <div>
+          {content}
+        </div>
       </div>
     );
   }

@@ -83,6 +83,17 @@ class ContractCaller {
     return this.web3.eth.accounts;
   }
 
+  getUserMessage(user: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      this.contract.getUserMessage(user, (err, message) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(message);
+      });
+    });
+  }
+
   getPixelColor(pixel: Pixel): Promise<Pixel> {
     return new Promise((resolve, reject) => {
       this.contract.getPixelColor(pixel.y, pixel.x, (err, colorBigNum) => {
