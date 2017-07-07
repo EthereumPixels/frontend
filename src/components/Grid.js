@@ -117,6 +117,8 @@ class Grid extends Component<void, Props, void> {
   }
 
   render() {
+    const { hoverPixel, selectedPixel } = this.props;
+
     return (
       <MouseZone
         onClick={this._handleClick}
@@ -126,9 +128,10 @@ class Grid extends Component<void, Props, void> {
         onWheel={this._handleWheel}
       >
         <Overlay
-          hoverElemPixel={this._convertImagePixelToElementPixel(this.props.hoverPixel)}
-          selectedElemPixel={this._convertImagePixelToElementPixel(this.props.selectedPixel)}
+          hoverElemPixel={this._convertImagePixelToElementPixel(hoverPixel)}
+          hoverPixel={hoverPixel}
           pixelSize={this._getScalingFactor()}
+          selectedElemPixel={this._convertImagePixelToElementPixel(selectedPixel)}
         >
           <div className="Grid">
             <canvas

@@ -89,6 +89,9 @@ class ContractCaller {
         if (err) {
           reject(err);
         }
+        if (!colorBigNum) {
+          reject('Color is null');
+        }
         const colorInt = parseInt(colorBigNum.valueOf(), 10);
         const color = colorConversion.decimalToHex(colorInt);
         const newPixel = { ...pixel, color };
