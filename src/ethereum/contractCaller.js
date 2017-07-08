@@ -114,7 +114,10 @@ class ContractCaller {
           return reject('Color is null');
         }
         const colorInt = parseInt(colorBigNum.valueOf(), 10);
-        const color = colorConversion.decimalToHex(colorInt);
+        let color = colorConversion.decimalToHex(colorInt);
+        if (color === '000000') {
+          color = 'transparent';
+        }
         const newPixel = { ...pixel, color };
         resolve(newPixel);
       });

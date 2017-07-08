@@ -2,7 +2,16 @@
 
 import type { Pixel } from '../ethereum/Pixel'
 
-import { Col, Grid, Row } from 'react-bootstrap'
+import {
+  Button,
+  ButtonToolbar,
+  Col,
+  Grid,
+  OverlayTrigger,
+  Row,
+  Tooltip,
+} from 'react-bootstrap'
+import ColorPicker from './ColorPicker'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
@@ -12,14 +21,40 @@ type Props = {
   selectedPixel: ?Pixel,
 };
 
-class SidebarPixel extends Component<void, Props, void> {
-  props: Props;
+type State = {
+  color: ?string,
+};
 
-  shouldComponentUpdate(nextProps: Props): boolean {
-    const pixel = this.props.selectedPixel;
-    const nextPixel = nextProps.selectedPixel;
-    return !pixel || !nextPixel || nextPixel.x !== pixel.x || nextPixel.y !== pixel.y;
+function samePixel(a, b) {
+  return a && b && a.x === b.x && a.y === b.y;
+}
+
+class SidebarPixel extends Component<void, Props, State> {
+  props: Props;
+  state: State;
+
+  constructor(props: Props) {
+    super(props);
+    this.state = { color: null };
   }
+
+  componentWillReceiveProps(nextProps: Props): void {
+    if (!samePixel(this.props.selectedPixel, nextProps.selectedPixel)) {
+      this.setState({ color: null });
+    }
+  }
+
+  shouldComponentUpdate(nextProps: Props, nextState: State): boolean {
+    if (this.state.color !== nextState.color) {
+      return true;
+    }
+    return !samePixel(this.props.selectedPixel, nextProps.selectedPixel);
+  }
+
+  _handleColorChange = ({ hex }: { hex: string }) => {
+    const color = hex[0] === '#' ? hex.substr(1) : hex;
+    this.setState({ color });
+  };
 
   render() {
     const { selectedPixel } = this.props;
@@ -27,16 +62,7 @@ class SidebarPixel extends Component<void, Props, void> {
       return;
     }
 
-    const color = selectedPixel.color || '000000';
-    const colorText = color === '000000' ? 'Transparent' : (
-      <div>
-        #{color}
-        <div className="Sidebar-colorbox" style={{
-          backgroundColor: `#${color}`,
-        }}/>
-      </div>
-    );
-
+    const color = this.state.color || selectedPixel.color;
     const owner = selectedPixel.owner || '';
     const ownerLink = (
       <a href={`https://rinkeby.etherscan.io/address/${owner}`}>
@@ -49,10 +75,17 @@ class SidebarPixel extends Component<void, Props, void> {
     const messageText = selectedPixel.message || 'Not set';
     const price = window.web3.fromWei(selectedPixel.price, 'ether');
 
+    const buyTooltip = (
+      <Tooltip id="buyTooltip">
+        Set the color by paying the listed price.
+        You will own the pixel
+      </Tooltip>
+    );
+
     return (
       <Grid fluid={true}>
         <Row>
-          <Col xs={7}>
+          <Col xs={6}>
             <div>
               <div className="Sidebar-subheader">Location</div>
               <div className="Sidebar-header">
@@ -63,12 +96,23 @@ class SidebarPixel extends Component<void, Props, void> {
               <div className="Sidebar-subheader">Price</div>
               <div>{price} ETH</div>
             </div>
+            <ButtonToolbar>
+              <OverlayTrigger placement="right" overlay={buyTooltip}>
+                <Button bsStyle="primary" disabled={this.state.color === null}>
+                  Set Color
+                </Button>
+              </OverlayTrigger>
+            </ButtonToolbar>
           </Col>
-          <Col xs={5}>
+          <Col xs={6}>
             <div className="Sidebar-subheader">Color</div>
-            <div>{colorText}</div>
+            <ColorPicker
+              color={color}
+              onChangeComplete={this._handleColorChange}
+            />
           </Col>
         </Row>
+        <div className="Sidebar-row Sidebar-divider" />
         <Row className="Sidebar-row">
           <Col xs={12}>
             <div className="Sidebar-subheader">Owner</div>

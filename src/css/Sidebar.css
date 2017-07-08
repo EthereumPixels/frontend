@@ -48,6 +48,11 @@
   user-select: none;
 }
 
+.Sidebar-divider {
+  width: 100%;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+}
+
 .Sidebar-address {
   color: rgb(240, 80, 125);
   max-width: 80%;
@@ -71,12 +76,4 @@
 
 .Sidebar-row {
   margin-top: 12px;
-}
-
-.Sidebar-colorbox {
-  border: 1px solid #000;
-  border-radius: 4px;
-  transition: all 0.3s ease;
-  height: 60px;
-  width: 60px;
 }
