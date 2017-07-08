@@ -28,9 +28,10 @@ class Overlay extends PureComponent<void, Props, void> {
     ) {
       return null;
     }
-    const marginLeft = hoverElemPixel.x > document.body.clientWidth * 0.6
-      ? -90 - pixelSize * 2
-      : null;
+    const marginLeft = document && document.body &&
+      hoverElemPixel.x > document.body.clientWidth * 0.6
+        ? -90 - pixelSize * 2
+        : null;
     return (
       <div className="Overlay-tooltip" style={{
         marginLeft,

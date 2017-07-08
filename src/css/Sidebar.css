@@ -48,6 +48,31 @@
   user-select: none;
 }
 
+.Sidebar-address {
+  color: rgb(240, 80, 125);
+  max-width: 80%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.Sidebar-you {
+  color: #fff;
+}
+
+.Sidebar-address:hover {
+  overflow:visible;
+  white-space: nowrap;
+}
+
+.Sidebar-address:hover .Sidebar-you {
+  display: none;
+}
+
+.Sidebar-price {
+  font-size: 20px;
+}
+
 .Sidebar-row {
   margin-top: 16px;
 }

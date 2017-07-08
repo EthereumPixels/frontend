@@ -10,8 +10,8 @@ import store from '../store'
 import { GRID_SIZE, CONTRACT_ADDRESS } from '../configs'
 
 class ContractCaller {
-  web3: Web3;
-  contract: Object;
+  web3: ?Web3;
+  contract: ?Object;
   timerID: ?number;
 
   init() {
@@ -51,6 +51,9 @@ class ContractCaller {
 
   loadPixels(): void {
     const { contract } = this;
+    if (!contract) {
+      return;
+    }
     const events = contract.allEvents({
       fromBlock: 412133,
       toBlock: "latest",
@@ -79,23 +82,30 @@ class ContractCaller {
     });
   }
 
-  getAccounts(): Array<string> {
-    return this.web3.eth.accounts;
+  getAccounts(): Array<?string> {
+    return this.web3 ? this.web3.eth.accounts : [];
   }
 
-  getUserMessage(user: string): Promise<string> {
+  getUserMessage(pixel: Pixel): Promise<Pixel> {
     return new Promise((resolve, reject) => {
-      this.contract.getUserMessage(user, (err, message) => {
+      if (!this.contract) {
+        return reject('Contract is not initialized');
+      }
+      this.contract.getUserMessage(pixel.owner, (err, message) => {
         if (err) {
           return reject(err);
         }
-        resolve(message);
+        const newPixel = { ...pixel, message };
+        resolve(newPixel);
       });
     });
   }
 
   getPixelColor(pixel: Pixel): Promise<Pixel> {
     return new Promise((resolve, reject) => {
+      if (!this.contract) {
+        return reject('Contract is not initialized');
+      }
       this.contract.getPixelColor(pixel.y, pixel.x, (err, colorBigNum) => {
         if (err) {
           return reject(err);
@@ -113,6 +123,9 @@ class ContractCaller {
 
   getPixelPrice(pixel: Pixel): Promise<Pixel> {
     return new Promise((resolve, reject) => {
+      if (!this.contract) {
+        return reject('Contract is not initialized');
+      }
       this.contract.getPixelPrice(pixel.y, pixel.x, (err, price) => {
         if (err) {
           return reject(err);
@@ -128,6 +141,9 @@ class ContractCaller {
 
   getPixelOwner(pixel: Pixel): Promise<Pixel> {
     return new Promise((resolve, reject) => {
+      if (!this.contract) {
+        return reject('Contract is not initialized');
+      }
       this.contract.getPixelOwner(pixel.y, pixel.x, (err, owner) => {
         if (err) {
           return reject(err);
@@ -142,7 +158,6 @@ class ContractCaller {
     if (pixel.x < 0 || pixel.y < 0 || pixel.x >= GRID_SIZE || pixel.y >= GRID_SIZE) {
       return;
     }
-    store.dispatch({ type: 'PIXEL_SELECT', pixel });
     const caller = this;
     if (this.timerID) {
       window.clearTimeout(this.timerID);
@@ -153,6 +168,10 @@ class ContractCaller {
       }).then(function(pixel) {
         return caller.getPixelPrice(pixel);
       }).then(function(pixel) {
+        return caller.getUserMessage(pixel);
+      }).then(function(pixel) {
+        const owned = caller.getAccounts().includes(pixel.owner);
+        pixel.ownedByViewer = owned;
         store.dispatch({ type: 'PIXEL_SELECT', pixel });
         caller.timerID = null;
       });
