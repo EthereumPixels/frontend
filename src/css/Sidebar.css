@@ -1,15 +1,15 @@
 .Sidebar {
-  background: rgb(37, 52, 71);
+  background: #fff;
   bottom: 0;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-  color: #fff;
+  color: #000;
   overflow-x: hidden;
   overflow-y: scroll;
   padding: 16px 0;
   position: absolute;
   right: 0;
   top: 0;
-  width: 30%;
+  width: 360px;
   z-index: 1;
 }
 
@@ -57,7 +57,7 @@
 }
 
 .Sidebar-you {
-  color: #fff;
+  color: #000;
 }
 
 .Sidebar-address:hover {
@@ -69,18 +69,14 @@
   display: none;
 }
 
-.Sidebar-price {
-  font-size: 20px;
-}
-
 .Sidebar-row {
-  margin-top: 16px;
+  margin-top: 12px;
 }
 
 .Sidebar-colorbox {
-  border: 1px solid #fff;
-  display: inline-block;
-  height: 10px;
-  margin-left: 4px;
-  width: 10px;
+  border: 1px solid #000;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  height: 60px;
+  width: 60px;
 }

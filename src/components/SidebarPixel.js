@@ -30,12 +30,12 @@ class Sidebar extends Component<void, Props, void> {
 
     const color = selectedPixel.color || '000000';
     const colorText = color === '000000' ? 'Transparent' : (
-      <span>
+      <div>
         #{color}
-        <span className="Sidebar-colorbox" style={{
+        <div className="Sidebar-colorbox" style={{
           backgroundColor: `#${color}`,
         }}/>
-      </span>
+      </div>
     );
 
     const owner = selectedPixel.owner || '';
@@ -48,49 +48,40 @@ class Sidebar extends Component<void, Props, void> {
       ? <span><span className="Sidebar-you">You - </span>{ownerLink}</span>
       : ownerLink;
     const messageText = selectedPixel.message || 'Not set';
-
-    const content = [
-      <Row className="Sidebar-row" key="owner">
-        <Col xs={12}>
-          <div className="Sidebar-subheader">Owner</div>
-          <div className="Sidebar-address">{ownerText}</div>
-        </Col>
-      </Row>,
-      <Row className="Sidebar-row" key="message">
-        <Col xs={12}>
-          <div className="Sidebar-subheader">Message</div>
-          <div>{messageText}</div>
-        </Col>
-      </Row>,
-      <Row className="Sidebar-row" key="price">
-        <Col xs={12}>
-          <div className="Sidebar-subheader">Price</div>
-          <div className="Sidebar-price">
-            {window.web3.fromWei(selectedPixel.price, 'ether')} ETH
-          </div>
-        </Col>
-      </Row>,
-    ];
-
-    const rightContent = (
-      <Col xs={6}>
-        <div className="Sidebar-subheader">Color</div>
-        <div>{colorText}</div>
-      </Col>
-    );
+    const price = window.web3.fromWei(selectedPixel.price, 'ether');
 
     return (
       <Grid fluid={true}>
         <Row>
-          <Col xs={6}>
-            <div className="Sidebar-subheader">Location</div>
-            <div className="Sidebar-header">
-              {selectedPixel.x}, {selectedPixel.y}
+          <Col xs={7}>
+            <div>
+              <div className="Sidebar-subheader">Location</div>
+              <div className="Sidebar-header">
+                {selectedPixel.x}, {selectedPixel.y}
+              </div>
+            </div>
+            <div className="Sidebar-row">
+              <div className="Sidebar-subheader">Price</div>
+              <div>{price} ETH</div>
             </div>
           </Col>
-          {rightContent}
+          <Col xs={5}>
+            <div className="Sidebar-subheader">Color</div>
+            <div>{colorText}</div>
+          </Col>
         </Row>
-        {content}
+        <Row className="Sidebar-row">
+          <Col xs={12}>
+            <div className="Sidebar-subheader">Owner</div>
+            <div className="Sidebar-address">{ownerText}</div>
+          </Col>
+        </Row>
+        <Row className="Sidebar-row">
+          <Col xs={12}>
+            <div className="Sidebar-subheader">Message</div>
+            <div>{messageText}</div>
+          </Col>
+        </Row>
       </Grid>
     );
   }
