@@ -123,14 +123,14 @@ class SidebarPixel extends Component<void, Props, State> {
         <div className="Sidebar-row Sidebar-divider" />
         <Row className="Sidebar-row">
           <Col xs={12}>
-            <div className="Sidebar-subheader">Owner</div>
-            <div className="Sidebar-address">{ownerText}</div>
+            <div className="Sidebar-subheader">Message</div>
+            <div>{messageText}</div>
           </Col>
         </Row>
         <Row className="Sidebar-row">
           <Col xs={12}>
-            <div className="Sidebar-subheader">Message</div>
-            <div>{messageText}</div>
+            <div className="Sidebar-subheader">Owner</div>
+            <div className="Sidebar-address">{ownerText}</div>
           </Col>
         </Row>
       </Grid>

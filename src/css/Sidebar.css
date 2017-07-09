@@ -1,5 +1,5 @@
 .Sidebar {
-  background: #fff;
+  background: linear-gradient(to bottom left, #ffffff, #efefef, #ddd);
   bottom: 0;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   color: #000;
