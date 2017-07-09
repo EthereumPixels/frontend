@@ -34,6 +34,7 @@ class Sidebar extends Component<void, Props, void> {
 
     return (
       <ReactCSSTransitionGroup
+        onMouseMove={(event) => event.stopPropagation()}
         transitionEnterTimeout={300}
         transitionLeaveTimeout={300}
         transitionName="Sidebar-slide"
