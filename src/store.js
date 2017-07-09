@@ -1,6 +1,6 @@
 // @flow
 
-import { Record } from 'immutable'
+import { List, Record } from 'immutable'
 import { createStore } from 'redux'
 import colorConversion from './colorConversion'
 
@@ -17,6 +17,7 @@ const State = Record({
   headerHeight: 0,
   hoverPixel: null,
   nonce: 0,
+  notifications: List(),
   selectedPixel: null,
   selectedSidebar: null,
   sourceImage: null, // HTMLCanvasElement that contains the unmodified image
@@ -119,6 +120,21 @@ function reduce(state: State = new State(), action) {
     case 'NAVIGATE_SIDEBAR': {
       const { sidebar } = action;
       return state.merge({ selectedSidebar: sidebar });
+    }
+    case 'ADD_NOTIFICATION': {
+      const { notification } = action;
+      if (!notification) {
+        return state;
+      }
+      const notifications = state.get('notifications');
+      return state.merge({ notifications: notifications.push(notification) });
+    }
+    case 'REMOVE_NOTIFICATION': {
+      const { notification } = action;
+      const { key } = notification;
+      let notifications = state.get('notifications');
+      notifications = notifications.filter((n) => n.key !== key);
+      return state.merge({ notifications });
     }
     case 'SET_HEADER': {
       return updateDimensions(state, action.height);

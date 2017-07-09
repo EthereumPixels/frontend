@@ -5,6 +5,7 @@ import type { Pixel } from './Pixel'
 import Web3 from 'web3'
 import Grid from './Grid.json'
 import colorConversion from '../colorConversion'
+import notifier from '../notifier'
 import store from '../store'
 
 import { GRID_SIZE, CONTRACT_ADDRESS } from '../configs'
@@ -37,10 +38,7 @@ class ContractCaller {
     let tries = 0;
 
     if (web3.isConnected()) {
-      this.connected = true;
-      this.printNetwork();
-      this.loadPixels();
-      return;
+      return this._doOnSuccessfulConnection();
     }
 
     // Mist Wallet needs this hack to work. For some reason it initially
@@ -48,17 +46,22 @@ class ContractCaller {
     const interval = window.setInterval(() => {
       if (web3.isConnected()) {
         window.clearInterval(interval);
-        this.connected = true;
-        this.printNetwork();
-        this.loadPixels();
+        return this._doOnSuccessfulConnection();
       }
       tries += 1;
       if (tries === 5) {
         // Permanently fails and stay in cached view-only mode
-        console.log('Not connected to Ethereum network');
+        notifier.add('Not connected to Ethereum network', true);
         window.clearInterval(interval);
       }
     }, 200);
+  }
+
+  _doOnSuccessfulConnection(): void {
+    notifier.add('Connected to Ethereum network');
+    this.connected = true;
+    this.printNetwork();
+    this.loadPixels();
   }
 
   printNetwork(): void {
