@@ -3,7 +3,8 @@
 import React from 'react'
 import { Clearfix, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { CustomPicker } from 'react-color'
-import { EditableInput } from 'react-color/lib/components/common'
+import { Checkboard, EditableInput } from 'react-color/lib/components/common'
+import classNames from 'classnames'
 
 import '../css/ColorPicker.css'
 
@@ -55,12 +56,21 @@ class ColorPicker extends React.Component<void, Props, void> {
         </OverlayTrigger>
       );
     });
+    const color = this.props.hex;
+    const className = classNames({
+      'ColorPicker': true,
+      'ColorPicker-transparent': color === 'transparent',
+    });
     return (
-      <Clearfix className="ColorPicker">
+      <Clearfix className={className}>
         <div
           className="ColorPicker-colorbox"
-          style={{ backgroundColor: this.props.hex }}
-        />
+          style={{ backgroundColor: color }}
+        >
+          <div className="ColorPicker-checkboard">
+            <Checkboard size={15} />
+          </div>
+        </div>
         <EditableInput
           label="hex"
           onChange={this._handleColorChange}
