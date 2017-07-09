@@ -61,7 +61,7 @@ class ContractCaller {
       fromBlock: 412133,
       toBlock: "latest",
     });
-    events.watch(function(err, log) {
+    events.watch((err, log) => {
       if (err) {
         return;
       }
@@ -76,6 +76,13 @@ class ContractCaller {
           const colorHex = colorConversion.decimalToHex(colorInt);
           const pixel: Pixel = { x: col, y: row, color: colorHex, owner };
           store.dispatch({ type: 'PIXEL_COLOR', pixel });
+
+          // If the updated pixel is the currently selected pixel, force a
+          // refetch to update the sidebar information
+          const selectedPixel = store.getState().get('selectedPixel');
+          if (selectedPixel && selectedPixel.x === col && selectedPixel.y === col) {
+            this.selectPixel(pixel);
+          }
           break;
         case 'PixelMessage':
           break;
