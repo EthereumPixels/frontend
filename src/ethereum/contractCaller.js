@@ -11,6 +11,7 @@ import { GRID_SIZE, CONTRACT_ADDRESS } from '../configs'
 
 class ContractCaller {
   web3: Web3;
+  connected: boolean;
   contract: Object;
   timerID: ?number;
 
@@ -27,7 +28,41 @@ class ContractCaller {
       throw new Error('Invalid contract ABI');
     }
 
-    web3.version.getNetwork((err, netId) => {
+    window.contract = contract; // for debugging
+    this.contract = contract;
+    this.connected = false;
+    this.web3 = web3;
+    this.timerID = null;
+
+    let tries = 0;
+
+    if (web3.isConnected()) {
+      this.connected = true;
+      this.printNetwork();
+      this.loadPixels();
+      return;
+    }
+
+    // Mist Wallet needs this hack to work. For some reason it initially
+    // returns false for web3.isConnected()
+    const interval = window.setInterval(() => {
+      if (web3.isConnected()) {
+        window.clearInterval(interval);
+        this.connected = true;
+        this.printNetwork();
+        this.loadPixels();
+      }
+      tries += 1;
+      if (tries === 5) {
+        // Permanently fails and stay in cached view-only mode
+        console.log('Not connected to Ethereum network');
+        window.clearInterval(interval);
+      }
+    }, 200);
+  }
+
+  printNetwork(): void {
+    this.web3.version.getNetwork((err, netId) => {
       switch (netId) {
         case '1':
           console.log('Network: Mainnet');
@@ -45,11 +80,6 @@ class ContractCaller {
           console.log('Network: Unknown');
       }
     });
-
-    window.contract = contract;
-    this.contract = contract;
-    this.web3 = web3;
-    this.timerID = null;
   }
 
   loadPixels(): void {
