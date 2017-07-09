@@ -10,8 +10,8 @@ import store from '../store'
 import { GRID_SIZE, CONTRACT_ADDRESS } from '../configs'
 
 class ContractCaller {
-  web3: ?Web3;
-  contract: ?Object;
+  web3: Web3;
+  contract: Object;
   timerID: ?number;
 
   init() {
@@ -23,6 +23,9 @@ class ContractCaller {
     }
 
     const contract = web3.eth.contract(Grid.abi).at(CONTRACT_ADDRESS);
+    if (!contract) {
+      throw new Error('Invalid contract ABI');
+    }
 
     web3.version.getNetwork((err, netId) => {
       switch (netId) {
@@ -179,6 +182,46 @@ class ContractCaller {
         caller.timerID = null;
       });
     }, 200);
+  }
+
+  setPixel(pixel: Pixel, colorHex: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const user = pixel.ownedByViewer ? pixel.owner : this.web3.eth.coinbase;
+      if (!user) {
+        return reject('Invalid user');
+      }
+
+      const callback = (err, transactionHash) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(transactionHash);
+      };
+
+      const { x, y, price } = pixel;
+      if (typeof x !== 'number' || typeof y !== 'number' || typeof price !== 'number') {
+        throw new Error('Unexpected inputs');
+      }
+
+      if (pixel.ownedByViewer) {
+        this.contract.setPixelColor(
+          y,
+          x,
+          parseInt(colorHex, 16),
+          { from: user },
+          callback,
+        );
+      } else {
+        this.contract.buyPixel(
+          y,
+          x,
+          price * 2,
+          parseInt(colorHex, 16),
+          { from: user, value: price },
+          callback,
+        );
+      }
+    });
   }
 }
 

@@ -8,12 +8,13 @@ import {
   Col,
   Grid,
   OverlayTrigger,
+  Popover,
   Row,
-  Tooltip,
 } from 'react-bootstrap'
 import ColorPicker from './ColorPicker'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import contractCaller from '../ethereum/contractCaller'
 
 import '../css/Sidebar.css'
 
@@ -26,8 +27,9 @@ type State = {
   colorPickerExpanded: boolean,
 };
 
-function samePixel(a, b) {
-  return a && b && a.x === b.x && a.y === b.y;
+function samePixel(a: ?Pixel, b: ?Pixel): boolean {
+  return !!a && !!b && a.x === b.x && a.y === b.y && a.color === b.color &&
+    a.owner === b.owner;
 }
 
 class SidebarPixel extends Component<void, Props, State> {
@@ -58,10 +60,95 @@ class SidebarPixel extends Component<void, Props, State> {
     return !samePixel(this.props.selectedPixel, nextProps.selectedPixel);
   }
 
+  _handleButtonClick = (event: SyntheticMouseEvent) => {
+    if (event.target instanceof HTMLElement) {
+      event.target.blur();
+    }
+    this.refs.overlay.hide();
+
+    if (!this.state.colorPickerExpanded) {
+      this.setState({ colorPickerExpanded: true });
+      return;
+    }
+    const { color } = this.state;
+    const { selectedPixel } = this.props;
+    if (!color || !selectedPixel) {
+      throw new Error('Unexpected inputs');
+    }
+
+    contractCaller.setPixel(selectedPixel, color).then(() => {
+      this.setState({
+        color: null,
+        colorPickerExpanded: false,
+      });
+    }).catch(function(error) {
+      // TODO: Show error message here
+    });
+  };
+
   _handleColorChange = ({ hex }: { hex: string }) => {
     const color = hex[0] === '#' ? hex.substr(1) : hex;
     this.setState({ color });
   };
+
+  _renderSetColorButton() {
+    const { selectedPixel } = this.props;
+    if (!selectedPixel) {
+      return null;
+    }
+    const { colorPickerExpanded, color } = this.state;
+    const buttonDisabled = colorPickerExpanded && !color;
+
+    let popoverTitle = null;
+    let popoverText = null;
+
+    if (selectedPixel.ownedByViewer) {
+      if (color) {
+        popoverTitle = 'Update your Pixel';
+        popoverText = `Save the selected color to the blockchain by paying the
+          gas cost`;
+      } else {
+        popoverTitle = 'Manage your Pixel';
+        popoverText = `You are the owner of the pixel.
+          Set the color anytime by paying the gas cost`;
+      }
+    } else {
+      if (color) {
+        const price = contractCaller.web3.fromWei(selectedPixel.price, 'ether');
+        popoverTitle = 'Finalize your new Pixel';
+        popoverText = `Save the selected color to the blockchain by paying
+          ${price} ETH + gas cost`;
+      } else {
+        popoverTitle = 'Claim a Pixel';
+        popoverText = `You can set the color by paying the amount listed above.
+          You will become the new owner of this pixel!`;
+      }
+    }
+
+    const popover = (
+      <Popover id="popover-buy-button" title={popoverTitle}>
+        {popoverText}
+      </Popover>
+    );
+
+    return (
+      <OverlayTrigger
+        placement="left"
+        ref="overlay"
+        trigger={['hover', 'focus']}
+        overlay={popover}
+      >
+        <Button
+          bsStyle="primary"
+          disabled={buttonDisabled}
+          key="setColorButton"
+          onClick={this._handleButtonClick}
+        >
+          {color ? 'Save Color' : 'Choose Color'}
+        </Button>
+      </OverlayTrigger>
+    );
+  }
 
   render() {
     const { selectedPixel } = this.props;
@@ -80,14 +167,7 @@ class SidebarPixel extends Component<void, Props, State> {
       ? <span><span className="Sidebar-you">You - </span>{ownerLink}</span>
       : ownerLink;
     const messageText = selectedPixel.message || 'Not set';
-    const price = window.web3.fromWei(selectedPixel.price, 'ether');
-
-    const buyTooltip = (
-      <Tooltip id="buyTooltip">
-        Set the color by paying the listed price.
-        You will own the pixel
-      </Tooltip>
-    );
+    const price = contractCaller.web3.fromWei(selectedPixel.price, 'ether');
 
     return (
       <Grid fluid={true}>
@@ -103,13 +183,12 @@ class SidebarPixel extends Component<void, Props, State> {
               <div className="Sidebar-subheader">Price</div>
               <div>{price} ETH</div>
             </div>
-            <ButtonToolbar>
-              <OverlayTrigger placement="right" overlay={buyTooltip}>
-                <Button bsStyle="primary" disabled={this.state.color === null}>
-                  Set Color
-                </Button>
-              </OverlayTrigger>
-            </ButtonToolbar>
+            <div className="Sidebar-row">
+              <div className="Sidebar-subheader">Action</div>
+              <ButtonToolbar className="Sidebar-buttons">
+                {this._renderSetColorButton()}
+              </ButtonToolbar>
+            </div>
           </Col>
           <Col xs={6}>
             <div className="Sidebar-subheader">Color</div>
