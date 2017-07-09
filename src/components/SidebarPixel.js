@@ -9,11 +9,10 @@ import PropTypes from 'prop-types'
 import '../css/Sidebar.css'
 
 type Props = {
-  hoverPixel: ?Pixel,
   selectedPixel: ?Pixel,
 };
 
-class Sidebar extends Component<void, Props, void> {
+class SidebarPixel extends Component<void, Props, void> {
   props: Props;
 
   shouldComponentUpdate(nextProps: Props): boolean {
@@ -87,9 +86,8 @@ class Sidebar extends Component<void, Props, void> {
   }
 }
 
-Sidebar.propTypes = {
-  hoverPixel: PropTypes.object,
+SidebarPixel.propTypes = {
   selectedPixel: PropTypes.object,
 };
 
-export default Sidebar
+export default SidebarPixel

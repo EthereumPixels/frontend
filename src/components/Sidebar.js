@@ -20,7 +20,7 @@ class Sidebar extends Component<void, Props, void> {
     let content = null;
     switch (this.props.selectedSidebar) {
       case 'pixel':
-        content = <SidebarPixel {...this.props} />;
+        content = <SidebarPixel selectedPixel={this.props.selectedPixel} />;
         break;
       default:
         break;
