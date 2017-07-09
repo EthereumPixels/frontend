@@ -23,6 +23,7 @@ type Props = {
 
 type State = {
   color: ?string,
+  colorPickerExpanded: boolean,
 };
 
 function samePixel(a, b) {
@@ -35,17 +36,23 @@ class SidebarPixel extends Component<void, Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.state = { color: null };
+    this.state = {
+      color: null,
+      colorPickerExpanded: false,
+    };
   }
 
   componentWillReceiveProps(nextProps: Props): void {
     if (!samePixel(this.props.selectedPixel, nextProps.selectedPixel)) {
-      this.setState({ color: null });
+      this.setState({ color: null, colorPickerExpanded: false });
     }
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State): boolean {
-    if (this.state.color !== nextState.color) {
+    if (
+      this.state.color !== nextState.color ||
+      this.state.colorPickerExpanded !== nextState.colorPickerExpanded
+    ) {
       return true;
     }
     return !samePixel(this.props.selectedPixel, nextProps.selectedPixel);
@@ -108,6 +115,7 @@ class SidebarPixel extends Component<void, Props, State> {
             <div className="Sidebar-subheader">Color</div>
             <ColorPicker
               color={color}
+              expanded={this.state.colorPickerExpanded}
               onChangeComplete={this._handleColorChange}
             />
           </Col>

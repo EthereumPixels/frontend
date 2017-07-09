@@ -28,6 +28,7 @@ const DEFAULT_COLORS = new Map([
 ]);
 
 type Props = {
+  expanded: boolean,
   hex: string,
   onChange: Function,
 };
@@ -56,11 +57,15 @@ class ColorPicker extends React.Component<void, Props, void> {
         </OverlayTrigger>
       );
     });
+
     const color = this.props.hex;
+
     const className = classNames({
       'ColorPicker': true,
+      'ColorPicker-expanded': this.props.expanded,
       'ColorPicker-transparent': color === 'transparent',
     });
+
     return (
       <Clearfix className={className}>
         <div

@@ -17,14 +17,15 @@
   box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px;
   position: relative;
   transition: all 0.3s ease;
-  height: 60px;
+  height: 150px;
   width: 150px;
 }
 
 .ColorPicker-palette {
   border-radius: 4px;
-  box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px;
+  height: 0;
   overflow: hidden;
+  transition: all 0.3s ease;
 }
 
 .ColorPicker input {
@@ -39,6 +40,16 @@
   text-transform: lowercase;
   width: 150px;
 }
+
+.ColorPicker-expanded .ColorPicker-colorbox {
+  height: 60px;
+}
+
+.ColorPicker-expanded .ColorPicker-palette {
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px;
+  height: 150px;
+}
+
 .ColorPicker-checkboard {
   opacity: 0;
   transition: all 0.3s ease;
