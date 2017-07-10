@@ -34,7 +34,7 @@ class HotKeys {
         store.dispatch({ type: 'MOVE', dx: 0, dy: 10 });
         break;
       case 'esc':
-        store.dispatch({ type: 'PIXEL_SELECT', pixel: null });
+        store.dispatch({ type: 'NAVIGATE_SIDEBAR', sidebar: null });
         break;
       default:
         break;

@@ -14,6 +14,7 @@ import {
 import ColorPicker from './ColorPicker'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import SidebarSimpleTab from './SidebarSimpleTab'
 import contractCaller from '../ethereum/contractCaller'
 import notifier from '../notifier'
 
@@ -33,7 +34,7 @@ function samePixel(a: ?Pixel, b: ?Pixel): boolean {
     a.owner === b.owner;
 }
 
-class SidebarPixel extends Component<void, Props, State> {
+class SidebarPixelTab extends Component<void, Props, State> {
   props: Props;
   state: State;
 
@@ -155,7 +156,11 @@ class SidebarPixel extends Component<void, Props, State> {
   render() {
     const { selectedPixel } = this.props;
     if (!selectedPixel) {
-      return;
+      return (
+        <SidebarSimpleTab>
+          No Pixel selected. Click somewhere on the image to select one!
+        </SidebarSimpleTab>
+      );
     }
 
     const color = this.state.color || selectedPixel.color;
@@ -219,8 +224,8 @@ class SidebarPixel extends Component<void, Props, State> {
   }
 }
 
-SidebarPixel.propTypes = {
+SidebarPixelTab.propTypes = {
   selectedPixel: PropTypes.object,
 };
 
-export default SidebarPixel
+export default SidebarPixelTab

@@ -2,45 +2,54 @@
 
 import type { Pixel } from '../ethereum/Pixel'
 
+import Navigation from './Navigation'
 import React, { Component } from 'react'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import PropTypes from 'prop-types'
-import SidebarPixel from './SidebarPixel'
+import SidebarPixelTab from './SidebarPixelTab'
+import SidebarSimpleTab from './SidebarSimpleTab'
 
 import '../css/Sidebar.css'
 
 type Props = {
-  selectedSidebar: string,
+  selectedSidebar: ?string,
   hoverPixel: ?Pixel,
   selectedPixel: ?Pixel,
 };
 
 class Sidebar extends Component<void, Props, void> {
   render() {
+    const { selectedPixel, selectedSidebar } = this.props;
+
     let content = null;
-    switch (this.props.selectedSidebar) {
+    switch (selectedSidebar) {
       case 'pixel':
-        content = <SidebarPixel selectedPixel={this.props.selectedPixel} />;
+        content = <SidebarPixelTab selectedPixel={selectedPixel} />;
+        break;
+      case null:
         break;
       default:
+        content = <SidebarSimpleTab>No content</SidebarSimpleTab>;
         break;
     }
 
-    const sidebar = content ? (
-      <div className="Sidebar" key="sidebar">
-        {content}
-      </div>
-    ) : null;
+    content = content ? <div className="Sidebar-content">{content}</div> : null;
 
     return (
-      <ReactCSSTransitionGroup
-        onMouseMove={(event) => event.stopPropagation()}
-        transitionEnterTimeout={300}
-        transitionLeaveTimeout={300}
-        transitionName="Sidebar-slide"
-      >
-        {sidebar}
-      </ReactCSSTransitionGroup>
+      <div className="Sidebar" key="sidebar">
+        <Navigation
+          hasSelectedPixel={!!selectedPixel}
+          selectedSidebar={selectedSidebar}
+        />
+        <ReactCSSTransitionGroup
+          onMouseMove={(event) => event.stopPropagation()}
+          transitionEnterTimeout={300}
+          transitionLeaveTimeout={300}
+          transitionName="Sidebar-slide"
+        >
+          {content}
+        </ReactCSSTransitionGroup>
+      </div>
     );
   }
 }

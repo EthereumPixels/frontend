@@ -1,0 +1,55 @@
+.Navigation ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+.Navigation-item {
+  cursor: pointer;
+  font-weight: bolder;
+  font-size: 12px;
+  background: rgba(33, 33, 33, 0.8);
+  color: #fff;
+  float: left;
+  padding: 4px 0;
+  margin: 0;
+  text-align: center;
+  text-transform: uppercase;
+  width: 25%;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.Navigation-item:hover {
+  z-index: 5;
+  box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.3);
+  background: rgba(22, 22, 22, 1.0);
+}
+
+.Navigation-item-active {
+  box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.3);
+  background: rgb(240, 80, 125);
+  z-index: 2;
+}
+
+.Navigation-item-active:hover {
+  background: rgb(240, 80, 125);
+}
+
+.Navigation-close {
+  color: rgba(255, 255, 255, 0.3);
+  display: none;
+  padding: 5px;
+  position: absolute;
+  right: 0;
+  transition: all 0.2s ease;
+}
+
+.Navigation-item-active .Navigation-close {
+  display: block;
+}
+
+.Navigation-item-active:hover .Navigation-close {
+  color: rgba(255, 255, 255, 0.8);
+}
