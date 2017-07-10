@@ -1,5 +1,7 @@
 // @flow
 
+import type { Pixel } from './ethereum/Pixel'
+
 import { List, Record } from 'immutable'
 import { createStore } from 'redux'
 import colorConversion from './colorConversion'
@@ -65,6 +67,24 @@ function updateDimensions(state: State, headerHeight: number): State {
   return state.merge({ headerHeight, canvasWidth, canvasHeight });
 }
 
+function populateCachedPixelColor(state: State, pixel: ?Pixel): ?Pixel {
+  if (!pixel || pixel.color) {
+    return pixel;
+  }
+  const canvas = state.get('sourceImage');
+  const { data } = canvas.getContext('2d').getImageData(pixel.x, pixel.y, 1, 1);
+  const r = data[0];
+  const g = data[1];
+  const b = data[2];
+  const a = data[3];
+  const colorInt = colorConversion.rgbToDecimal(r, g, b);
+  const color = a === 255
+    ? colorConversion.decimalToHex(colorInt)
+    : 'transparent';
+
+  return { ...pixel, color };
+}
+
 function reduce(state: State = new State(), action) {
   switch(action.type) {
     case 'PIXEL_COLOR': {
@@ -84,7 +104,9 @@ function reduce(state: State = new State(), action) {
       return state.merge({ sourceImage: canvas, nonce });
     }
     case 'PIXEL_SELECT': {
-      const { pixel } = action;
+      let { pixel } = action;
+      pixel = populateCachedPixelColor(state, pixel);
+
       let selectedSidebar = state.get('selectedSidebar');
       if (pixel) {
         selectedSidebar = 'pixel';
@@ -94,7 +116,8 @@ function reduce(state: State = new State(), action) {
       return state.merge({ selectedPixel: pixel, selectedSidebar });
     }
     case 'PIXEL_HOVER': {
-      const { pixel } = action;
+      let { pixel } = action;
+      pixel = populateCachedPixelColor(state, pixel);
       return state.merge({ hoverPixel: pixel });
     }
     case 'RESIZE': {

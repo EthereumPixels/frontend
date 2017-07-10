@@ -4,6 +4,7 @@ import type { Pixel } from '../ethereum/Pixel'
 
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
+import { Checkboard } from 'react-color/lib/components/common'
 import classNames from 'classnames'
 
 import { GRID_SIZE } from '../configs'
@@ -19,6 +20,29 @@ type Props = {
 };
 
 class Overlay extends PureComponent<void, Props, void> {
+  _renderColor(): ?React.Element<*> {
+    const { hoverPixel } = this.props;
+    if (!hoverPixel) {
+      return null;
+    }
+
+    const color = hoverPixel.color || 'transparent';
+    const className = classNames({
+      'Overlay-color-container': true,
+      'Overlay-color-transparent': color === 'transparent',
+    });
+
+    return (
+      <div className={className}>
+        <Checkboard size={6} />
+        <div
+          className="Overlay-color"
+          style={{ backgroundColor: `#${color}` }}
+        />
+      </div>
+    );
+  }
+
   _renderTooltip(): ?React.Element<*> {
     const { hoverPixel, hoverElemPixel, pixelSize } = this.props;
     if (
@@ -32,13 +56,17 @@ class Overlay extends PureComponent<void, Props, void> {
       hoverElemPixel.x > document.body.clientWidth * 0.6
         ? -90 - pixelSize * 2
         : null;
+
     return (
       <div className="Overlay-tooltip" style={{
         marginLeft,
         left: hoverElemPixel.x + pixelSize + 16,
         top: hoverElemPixel.y + pixelSize,
       }}>
-        {hoverPixel.x}, {hoverPixel.y}
+        <div className="Overlay-tooltip-text">
+          {hoverPixel.x}, {hoverPixel.y}
+        </div>
+        {this._renderColor()}
       </div>
     );
   }
