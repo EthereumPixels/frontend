@@ -42,6 +42,7 @@ class Notifier {
   }
 
   disconnected() {
+    this.remove({ key: 'disconnected' });
     this.add('Not connected to Ethereum network', true, 'disconnected');
   }
 

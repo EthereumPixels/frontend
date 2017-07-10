@@ -11,10 +11,11 @@ import store from '../store'
 import { GRID_SIZE, CONTRACT_ADDRESS } from '../configs'
 
 class ContractCaller {
-  web3: Web3;
   connected: boolean;
   contract: Object;
+  events: Object;
   timerID: ?number;
+  web3: Web3;
 
   init() {
     const web3 = new Web3();
@@ -29,40 +30,93 @@ class ContractCaller {
       throw new Error('Invalid contract ABI');
     }
 
+    this.events = contract.allEvents({
+      fromBlock: 412133,
+      toBlock: "latest",
+    });
+
     window.contract = contract; // for debugging
-    this.contract = contract;
     this.connected = false;
+    this.contract = contract;
     this.web3 = web3;
     this.timerID = null;
 
-    let tries = 0;
+    this.pollForConnection();
+  }
 
-    if (web3.isConnected()) {
-      return this._doOnSuccessfulConnection();
-    }
-
-    // Mist Wallet needs this hack to work. For some reason it initially
-    // returns false for web3.isConnected()
-    const interval = window.setInterval(() => {
-      if (web3.isConnected()) {
-        window.clearInterval(interval);
-        return this._doOnSuccessfulConnection();
-      }
-      tries += 1;
-      if (tries === 5) {
-        // Permanently fails and stay in cached view-only mode
-        notifier.disconnected();
-        window.clearInterval(interval);
-      }
-    }, 200);
+  _doOnFailedConnection(): void {
+    this.connected = false;
+    notifier.disconnected();
+    store.dispatch({ type: 'SET_CONNECTION', connected: false });
+    this.events.stopWatching();
   }
 
   _doOnSuccessfulConnection(): void {
-    notifier.connected();
     this.connected = true;
+    notifier.connected();
     store.dispatch({ type: 'SET_CONNECTION', connected: true });
     this.printNetwork();
-    this.loadPixels();
+    this.events.watch(this._handleContractEvent);
+  }
+
+  _handleContractEvent = (err: Object, log: Object) => {
+    if (err) {
+      return;
+    }
+
+    switch(log.event) {
+      case 'PixelTransfer':
+      case 'PixelPrice':
+        break;
+      case 'PixelColor':
+        const { row, col, color, owner } = log.args;
+        const colorInt = parseInt(color.valueOf(), 10);
+        const colorHex = colorConversion.decimalToHex(colorInt);
+        const pixel: Pixel = { x: col, y: row, color: colorHex, owner };
+        store.dispatch({ type: 'PIXEL_COLOR', pixel });
+
+        // If the updated pixel is the currently selected pixel, force a
+        // refetch to update the sidebar information
+        const selectedPixel = store.getState().get('selectedPixel');
+        if (selectedPixel && selectedPixel.x === col && selectedPixel.y === col) {
+          this.selectPixel(pixel);
+        }
+        break;
+      case 'PixelMessage':
+        break;
+      default:
+        break;
+    }
+  };
+
+  pollForConnection(): void {
+    const { web3 } = this;
+
+    // This is check is usually sufficient for MetaMask
+    if (web3.isConnected()) {
+      this._doOnSuccessfulConnection();
+    } else {
+      this._doOnFailedConnection();
+    }
+
+    let tries = 0;
+
+    // Mist Wallet needs this polling to work. For some reason it initially
+    // returns false for web3.isConnected()
+    const interval = window.setInterval(() => {
+      if (web3.isConnected() && !this.connected) {
+        window.clearInterval(interval);
+        return this._doOnSuccessfulConnection();
+      } else if (!web3.isConnected() && this.connected) {
+        window.clearInterval(interval);
+        return this._doOnFailedConnection();
+      }
+      tries += 1;
+      if (tries > 10) {
+        // Stop polling for changes after some attempts
+        window.clearInterval(interval);
+      }
+    }, 200);
   }
 
   printNetwork(): void {
@@ -82,46 +136,6 @@ class ContractCaller {
           break;
         default:
           console.log('Network: Unknown');
-      }
-    });
-  }
-
-  loadPixels(): void {
-    const { contract } = this;
-    if (!contract) {
-      return;
-    }
-    const events = contract.allEvents({
-      fromBlock: 412133,
-      toBlock: "latest",
-    });
-    events.watch((err, log) => {
-      if (err) {
-        return;
-      }
-
-      switch(log.event) {
-        case 'PixelTransfer':
-        case 'PixelPrice':
-          break;
-        case 'PixelColor':
-          const { row, col, color, owner } = log.args;
-          const colorInt = parseInt(color.valueOf(), 10);
-          const colorHex = colorConversion.decimalToHex(colorInt);
-          const pixel: Pixel = { x: col, y: row, color: colorHex, owner };
-          store.dispatch({ type: 'PIXEL_COLOR', pixel });
-
-          // If the updated pixel is the currently selected pixel, force a
-          // refetch to update the sidebar information
-          const selectedPixel = store.getState().get('selectedPixel');
-          if (selectedPixel && selectedPixel.x === col && selectedPixel.y === col) {
-            this.selectPixel(pixel);
-          }
-          break;
-        case 'PixelMessage':
-          break;
-        default:
-          break;
       }
     });
   }
