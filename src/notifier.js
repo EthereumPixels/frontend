@@ -1,5 +1,7 @@
 // @flow
 
+import React from 'react'
+
 import store from './store'
 
 class Notifier {
@@ -27,6 +29,21 @@ class Notifier {
 
   remove(notification: Object) {
     store.dispatch({ type: 'REMOVE_NOTIFICATION', notification });
+  }
+
+  transactionSubmitted(transactionHash: string): void {
+    this.add(
+      <div>
+        Transaction:
+        <a
+          className="transactionLink"
+          href={`https://rinkeby.etherscan.io/tx/${transactionHash}`}>
+          {transactionHash}
+        </a>
+        <br/>
+        Image will update when the blockchain confirms it
+      </div>
+    );
   }
 }
 

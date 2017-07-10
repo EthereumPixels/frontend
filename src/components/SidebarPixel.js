@@ -15,6 +15,7 @@ import ColorPicker from './ColorPicker'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import contractCaller from '../ethereum/contractCaller'
+import notifier from '../notifier'
 
 import '../css/Sidebar.css'
 
@@ -76,13 +77,14 @@ class SidebarPixel extends Component<void, Props, State> {
       throw new Error('Unexpected inputs');
     }
 
-    contractCaller.setPixel(selectedPixel, color).then(() => {
+    contractCaller.setPixel(selectedPixel, color).then((transactionHash) => {
       this.setState({
         color: null,
         colorPickerExpanded: false,
       });
+      notifier.transactionSubmitted(transactionHash);
     }).catch(function(error) {
-      // TODO: Show error message here
+      notifier.add('Transaction failed or was cancelled');
     });
   };
 
