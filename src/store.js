@@ -13,6 +13,7 @@ const State = Record({
   centerY: GRID_SIZE / 2, // Y coordinate of the camera center in image frame
   canvasHeight: 0,
   canvasWidth: 0,
+  connected: false,
   gridSize: GRID_SIZE,
   headerHeight: 0,
   hoverPixel: null,
@@ -135,6 +136,10 @@ function reduce(state: State = new State(), action) {
       let notifications = state.get('notifications');
       notifications = notifications.filter((n) => n.key !== key);
       return state.merge({ notifications });
+    }
+    case 'SET_CONNECTION': {
+      const { connected } = action;
+      return state.merge({ connected });
     }
     case 'SET_HEADER': {
       return updateDimensions(state, action.height);

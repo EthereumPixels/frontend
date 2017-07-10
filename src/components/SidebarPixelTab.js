@@ -21,6 +21,7 @@ import notifier from '../notifier'
 import '../css/Sidebar.css'
 
 type Props = {
+  connected: boolean,
   selectedPixel: ?Pixel,
 };
 
@@ -95,12 +96,12 @@ class SidebarPixelTab extends Component<void, Props, State> {
   };
 
   _renderSetColorButton() {
-    const { selectedPixel } = this.props;
+    const { connected, selectedPixel } = this.props;
     if (!selectedPixel) {
       return null;
     }
     const { colorPickerExpanded, color } = this.state;
-    const buttonDisabled = colorPickerExpanded && !color;
+    const buttonDisabled = colorPickerExpanded && (!connected || !color);
 
     let popoverTitle = null;
     let popoverText = null;
@@ -154,7 +155,7 @@ class SidebarPixelTab extends Component<void, Props, State> {
   }
 
   render() {
-    const { selectedPixel } = this.props;
+    const { connected, selectedPixel } = this.props;
     if (!selectedPixel) {
       return (
         <SidebarSimpleTab>
@@ -170,11 +171,25 @@ class SidebarPixelTab extends Component<void, Props, State> {
         {owner}
       </a>
     );
-    const ownerText = selectedPixel.ownedByViewer
-      ? <span><span className="Sidebar-you">You - </span>{ownerLink}</span>
-      : ownerLink;
-    const messageText = selectedPixel.message || 'Not set';
-    const price = contractCaller.web3.fromWei(selectedPixel.price, 'ether');
+
+    let ownerText = selectedPixel.ownedByViewer ? (
+      <span className="Sidebar-address">
+        <span className="Sidebar-you">You - </span>
+        {ownerLink}
+      </span>
+    ) : ownerLink;
+    let messageText = selectedPixel.message || 'Not set';
+    let priceText =
+      `${contractCaller.web3.fromWei(selectedPixel.price, 'ether')} ETH`;
+
+    if (!connected) {
+      const unconnected = (
+        <span className="Sidebar-unconnected">Not connected</span>
+      );
+      ownerText = unconnected;
+      messageText = unconnected;
+      priceText = unconnected;
+    }
 
     return (
       <Grid fluid={true}>
@@ -188,7 +203,7 @@ class SidebarPixelTab extends Component<void, Props, State> {
             </div>
             <div className="Sidebar-row">
               <div className="Sidebar-subheader">Price</div>
-              <div>{price} ETH</div>
+              <div>{priceText}</div>
             </div>
             <div className="Sidebar-row">
               <div className="Sidebar-subheader">Action</div>
@@ -216,7 +231,7 @@ class SidebarPixelTab extends Component<void, Props, State> {
         <Row className="Sidebar-row">
           <Col xs={12}>
             <div className="Sidebar-subheader">Owner</div>
-            <div className="Sidebar-address">{ownerText}</div>
+            <div>{ownerText}</div>
           </Col>
         </Row>
       </Grid>
@@ -225,6 +240,7 @@ class SidebarPixelTab extends Component<void, Props, State> {
 }
 
 SidebarPixelTab.propTypes = {
+  connected: PropTypes.bool.isRequired,
   selectedPixel: PropTypes.object,
 };
 

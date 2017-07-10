@@ -11,16 +11,21 @@ class Notifier {
     this.counter = 0;
   }
 
-  add(message: React.Element<*> | Node | string, permanent?: boolean) {
+  add(
+    message: React.Element<*> | Node | string,
+    permanent?: boolean,
+    overrideKey? : string,
+  ) {
     const { counter } = this;
+    const key = overrideKey || counter;
 
     const notification = {
       action: permanent ? 'Dismiss' : null,
       dismissAfter: permanent ? false : 6000,
-      key: counter,
+      key,
       message: message,
       style: false,
-      onClick: () => this.remove({ key: counter }),
+      onClick: () => this.remove({ key }),
     };
 
     store.dispatch({ type: 'ADD_NOTIFICATION', notification });
@@ -29,6 +34,15 @@ class Notifier {
 
   remove(notification: Object) {
     store.dispatch({ type: 'REMOVE_NOTIFICATION', notification });
+  }
+
+  connected() {
+    this.remove({ key: 'disconnected' });
+    this.add('Connected to Ethereum network');
+  }
+
+  disconnected() {
+    this.add('Not connected to Ethereum network', true, 'disconnected');
   }
 
   transactionSubmitted(transactionHash: string): void {
@@ -47,4 +61,7 @@ class Notifier {
   }
 }
 
-export default new Notifier()
+const notifier = new Notifier();
+window.notifier = notifier;
+
+export default notifier;

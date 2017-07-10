@@ -51,15 +51,16 @@ class ContractCaller {
       tries += 1;
       if (tries === 5) {
         // Permanently fails and stay in cached view-only mode
-        notifier.add('Not connected to Ethereum network', true);
+        notifier.disconnected();
         window.clearInterval(interval);
       }
     }, 200);
   }
 
   _doOnSuccessfulConnection(): void {
-    notifier.add('Connected to Ethereum network');
+    notifier.connected();
     this.connected = true;
+    store.dispatch({ type: 'SET_CONNECTION', connected: true });
     this.printNetwork();
     this.loadPixels();
   }
@@ -204,6 +205,12 @@ class ContractCaller {
     if (pixel.x < 0 || pixel.y < 0 || pixel.x >= GRID_SIZE || pixel.y >= GRID_SIZE) {
       return;
     }
+
+    if (!this.connected) {
+      store.dispatch({ type: 'PIXEL_SELECT', pixel });
+      return;
+    }
+
     const caller = this;
     if (this.timerID) {
       window.clearTimeout(this.timerID);

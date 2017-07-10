@@ -85,6 +85,11 @@
   display: none;
 }
 
+.Sidebar-unconnected {
+  color: rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+
 .Sidebar-row {
   margin-top: 12px;
 }

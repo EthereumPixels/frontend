@@ -12,9 +12,10 @@ import SidebarSimpleTab from './SidebarSimpleTab'
 import '../css/Sidebar.css'
 
 type Props = {
-  selectedSidebar: ?string,
+  connected: boolean,
   hoverPixel: ?Pixel,
   selectedPixel: ?Pixel,
+  selectedSidebar: ?string,
 };
 
 class Sidebar extends Component<void, Props, void> {
@@ -24,7 +25,7 @@ class Sidebar extends Component<void, Props, void> {
     let content = null;
     switch (selectedSidebar) {
       case 'pixel':
-        content = <SidebarPixelTab selectedPixel={selectedPixel} />;
+        content = <SidebarPixelTab {...this.props} />;
         break;
       case null:
         break;
@@ -55,6 +56,7 @@ class Sidebar extends Component<void, Props, void> {
 }
 
 Sidebar.propTypes = {
+  connected: PropTypes.bool.isRequired,
   hoverPixel: PropTypes.object,
   selectedPixel: PropTypes.object,
   selectedSidebar: PropTypes.string,
