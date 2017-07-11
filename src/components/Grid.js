@@ -19,6 +19,7 @@ type Props = {
   hoverPixel: ?Pixel,
   nonce: number,
   selectedPixel: ?Pixel,
+  sidebarVisible: boolean,
   sourceImage: ?HTMLCanvasElement,
   width: number,
   zoom: number,
@@ -132,6 +133,7 @@ class Grid extends Component<void, Props, void> {
           hoverPixel={hoverPixel}
           pixelSize={this._getScalingFactor()}
           selectedElemPixel={this._convertImagePixelToElementPixel(selectedPixel)}
+          sidebarVisible={this.props.sidebarVisible}
         >
           <div className="Grid">
             <canvas
@@ -155,6 +157,7 @@ Grid.propTypes = {
   hoverPixel: PropTypes.object,
   nonce: PropTypes.number.isRequired,
   selectedPixel: PropTypes.object,
+  sidebarVisible: PropTypes.bool.isRequired,
   sourceImage: PropTypes.object,
   width: PropTypes.number.isRequired,
   zoom: PropTypes.number.isRequired,

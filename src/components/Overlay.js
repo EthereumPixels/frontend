@@ -17,6 +17,7 @@ type Props = {
   hoverPixel?: ?Pixel,
   pixelSize: number,
   selectedElemPixel?: ?Pixel,
+  sidebarVisible: boolean,
 };
 
 class Overlay extends PureComponent<void, Props, void> {
@@ -85,7 +86,7 @@ class Overlay extends PureComponent<void, Props, void> {
 
     const className = classNames({
       'Overlay-blackout': true,
-      'Overlay-enabled': selectedElemPixel,
+      'Overlay-enabled': selectedElemPixel && this.props.sidebarVisible,
     });
 
     const selectedOverlay = <div className={className} style={{
@@ -111,6 +112,7 @@ Overlay.propTypes = {
   hoverPixel: PropTypes.object,
   pixelSize: PropTypes.number.isRequired,
   selectedElemPixel: PropTypes.object,
+  sidebarVisible: PropTypes.bool.isRequired,
 };
 
 export default Overlay

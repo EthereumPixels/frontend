@@ -11,6 +11,7 @@ const mapStateToProps = (state) => ({
   hoverPixel: state.get('hoverPixel') ? state.get('hoverPixel').toJS() : null,
   nonce: state.get('nonce'),
   selectedPixel: state.get('selectedPixel') ? state.get('selectedPixel').toJS() : null,
+  sidebarVisible: state.get('selectedSidebar') !== null,
   sourceImage: state.get('sourceImage'),
   width: state.get('canvasWidth'),
   zoom: state.get('zoom'),
