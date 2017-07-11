@@ -47,8 +47,8 @@ class Navigation extends Component<void, Props, void> {
         <ul>
           {this._renderSidebarItem('pixel')}
           {this._renderSidebarItem('user')}
-          {this._renderSidebarItem('recent')}
-          {this._renderSidebarItem('about')}
+          {this._renderSidebarItem('faq')}
+          {this._renderSidebarItem('contact')}
         </ul>
       </Clearfix>
     );

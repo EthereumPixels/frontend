@@ -183,7 +183,9 @@ class SidebarPixelTab extends Component<void, Props, State> {
         {ownerLink}
       </span>
     ) : ownerLink;
-    let messageText = selectedPixel.message || 'Not set';
+    let messageText = selectedPixel.message
+      ? <pre className="Sidebar-message">{selectedPixel.message}</pre>
+      : 'Not set';
     let priceText =
       `${contractCaller.web3.fromWei(selectedPixel.price, 'ether')} ETH`;
 
@@ -230,7 +232,7 @@ class SidebarPixelTab extends Component<void, Props, State> {
         <Row className="Sidebar-row">
           <Col xs={12}>
             <div className="Sidebar-subheader">Message</div>
-            <pre className="Sidebar-message">{messageText}</pre>
+            {messageText}
           </Col>
         </Row>
         <Row className="Sidebar-row">
