@@ -33,11 +33,10 @@ class Notifier {
 
     const notification = {
       action: permanent ? 'Dismiss' : null,
-      dismissAfter: permanent ? false : 6000,
+      dismissAfter: permanent ? false : 10000,
       key,
       message: message,
       style: false,
-      onClick: () => this.remove({ key }),
     };
 
     store.dispatch({ type: 'ADD_NOTIFICATION', notification });
@@ -84,6 +83,30 @@ class Notifier {
         Transaction: {getLink(transactionHash)}
         <br/>
         Message will update when the blockchain confirms it
+      </div>
+    );
+  }
+
+  pixelUpdated(x: number, y: number, colorHex: string): void {
+    const color = colorHex === '000000' ? 'transparent' : `#${colorHex}`;
+    this.add(
+      <div>
+        <a
+          className="transactionLink"
+          onClick={() => {
+            store.dispatch({ type: 'PIXEL_SELECT', pixel: { x, y } });
+            store.dispatch({ type: 'MOVE_TO', centerX: x, centerY: y });
+          }}
+        >
+          ({x}, {y})
+        </a>
+        {' is now '}
+        <span title={color}
+          className="notificiation-color-box"
+          style={{ background: `#${colorHex}` }}
+        >
+          <span>{color}</span>
+        </span>
       </div>
     );
   }

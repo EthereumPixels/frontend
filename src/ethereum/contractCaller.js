@@ -19,7 +19,9 @@ async function fetchCacheAsync() {
 class ContractCaller {
   connected: boolean;
   contract: Object;
-  events: Object;
+  futureEvents: Object;
+  notifyUponEvent: boolean;
+  pastEvents: Object;
   timerID: ?number;
   web3: Web3;
 
@@ -36,6 +38,13 @@ class ContractCaller {
       throw new Error('Invalid contract ABI');
     }
 
+    window.contract = contract; // for debugging
+    this.connected = false;
+    this.contract = contract;
+    this.notifyUponEvent = false;
+    this.web3 = web3;
+    this.timerID = null;
+
     fetchCacheAsync()
       .then(data => {
         const { image, lastBlock, centerX, centerY } = data;
@@ -46,26 +55,23 @@ class ContractCaller {
         imageElem.onload = () => {
           store.dispatch({ type: 'SET_IMAGE', image: imageElem });
 
-          this.events = contract.allEvents({
+          this.pastEvents = contract.allEvents({
             fromBlock: lastBlock,
-            toBlock: "latest",
+            toBlock: 'latest',
           });
+
+          this.futureEvents = contract.allEvents({ fromBlock: 'latest' });
+
           this.pollForConnection();
         };
       });
-
-    window.contract = contract; // for debugging
-    this.connected = false;
-    this.contract = contract;
-    this.web3 = web3;
-    this.timerID = null;
   }
 
   _doOnFailedConnection(): void {
     this.connected = false;
     notifier.disconnected();
     store.dispatch({ type: 'SET_CONNECTION', connected: false });
-    this.events.stopWatching();
+    this.futureEvents.stopWatching();
   }
 
   _doOnSuccessfulConnection(): void {
@@ -77,7 +83,13 @@ class ContractCaller {
     // MetaMask needs this to work or web3.eth.accounts will be empty
     window.setTimeout(() => this.fetchUsers(), 100);
 
-    this.events.watch(this._handleContractEvent);
+    // Draw all past events onto the canvas before turning on notification
+    // and watching for future events
+    this.pastEvents.get((err, logs) => {
+      logs.forEach(log => this._handleContractEvent(err, log));
+      this.notifyUponEvent = true;
+      this.futureEvents.watch(this._handleContractEvent);
+    });
   }
 
   _handleContractEvent = (err: Object, log: Object) => {
@@ -91,9 +103,11 @@ class ContractCaller {
         break;
       case 'PixelColor':
         const { row, col, color, owner } = log.args;
+        const x = parseInt(col, 10);
+        const y = parseInt(row, 10);
         const colorInt = parseInt(color.valueOf(), 10);
         const colorHex = colorConversion.decimalToHex(colorInt);
-        const pixel: Pixel = { x: col, y: row, color: colorHex, owner };
+        const pixel: Pixel = { x, y, color: colorHex, owner };
         store.dispatch({ type: 'PIXEL_COLOR', pixel });
 
         // If the updated pixel is the currently selected pixel, force a
@@ -101,6 +115,10 @@ class ContractCaller {
         const selectedPixel = store.getState().get('selectedPixel');
         if (selectedPixel && selectedPixel.x === col && selectedPixel.y === col) {
           this.selectPixel(pixel);
+        }
+
+        if (this.notifyUponEvent) {
+          notifier.pixelUpdated(x, y, colorHex);
         }
         break;
       case 'PixelMessage':

@@ -13,4 +13,9 @@ body {
 
 .transactionLink {
   color: rgb(240, 80, 125);
+  cursor: pointer;
+}
+
+.transactionLink:hover {
+  color: rgb(240, 80, 125);
 }
