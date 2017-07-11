@@ -4,6 +4,7 @@ import React, { Component } from 'react'
 import GridContainer from '../containers/GridContainer'
 import NotificationsContainer from '../containers/NotificationsContainer'
 import SidebarContainer from '../containers/SidebarContainer'
+import ZoomBarContainer from '../containers/ZoomBarContainer'
 
 import '../css/App.css'
 
@@ -14,6 +15,7 @@ class App extends Component {
         <GridContainer />
         <NotificationsContainer />
         <SidebarContainer />
+        <ZoomBarContainer />
       </div>
     );
   }
