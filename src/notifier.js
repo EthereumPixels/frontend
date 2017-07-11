@@ -4,6 +4,18 @@ import React from 'react'
 
 import store from './store'
 
+function getLink(transactionHash: string): React.Element<*> {
+  return (
+    <a
+      className="transactionLink"
+      rel="noopener noreferrer"
+      target="_blank"
+      href={`https://rinkeby.etherscan.io/tx/${transactionHash}`}>
+      {transactionHash}
+    </a>
+  );
+}
+
 class Notifier {
   counter: number;
 
@@ -49,14 +61,29 @@ class Notifier {
   transactionSubmitted(transactionHash: string): void {
     this.add(
       <div>
-        Transaction:
-        <a
-          className="transactionLink"
-          href={`https://rinkeby.etherscan.io/tx/${transactionHash}`}>
-          {transactionHash}
-        </a>
+        Transaction: {getLink(transactionHash)}
         <br/>
         Image will update when the blockchain confirms it
+      </div>
+    );
+  }
+
+  withdrawalSubmitted(transactionHash: string): void {
+    this.add(
+      <div>
+        Transaction: {getLink(transactionHash)}
+        <br/>
+        Withdrawal request submitted
+      </div>
+    );
+  }
+
+  messageSubmitted(transactionHash: string): void {
+    this.add(
+      <div>
+        Transaction: {getLink(transactionHash)}
+        <br/>
+        Message will update when the blockchain confirms it
       </div>
     );
   }

@@ -56,6 +56,10 @@ class ContractCaller {
     notifier.connected();
     store.dispatch({ type: 'SET_CONNECTION', connected: true });
     this.printNetwork();
+
+    // MetaMask needs this to work or web3.eth.accounts will be empty
+    window.setTimeout(() => this.fetchUsers(), 100);
+
     this.events.watch(this._handleContractEvent);
   }
 
@@ -211,6 +215,65 @@ class ContractCaller {
         }
         const newPixel = { ...pixel, owner };
         resolve(newPixel)
+      });
+    });
+  }
+
+  // Janky hack to synchronize fetching all user data
+  fetchUsers(): void {
+    const users = [];
+    let waiting = this.web3.eth.accounts.length * 2;
+    const checkDone = () => {
+      waiting -= 1;
+      if (waiting > 0) {
+        return;
+      }
+      store.dispatch({ type: 'SET_USERS', users });
+    };
+
+    this.web3.eth.accounts.forEach((address, i): void => {
+      users[i] = { address };
+      this.contract.getUserMessage(address, function(err, message: string) {
+        if (!err) {
+          users[i].message = message;
+        }
+        checkDone();
+      });
+
+      this.contract.checkPendingWithdrawal(
+        { from: address },
+        function(err, balance) {
+          if (!err) {
+            users[i].balance = parseInt(balance.valueOf(), 10);
+          }
+          checkDone();
+        },
+      );
+    });
+  }
+
+  setUserMessage(address: string, message: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      this.contract.setUserMessage(
+        message,
+        { from: address },
+        (err, transactionHash) => {
+          if (err) {
+            return reject(err);
+          }
+          resolve(transactionHash);
+        },
+      );
+    });
+  }
+
+  withdraw(address: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      this.contract.withdraw({ from: address }, (err, transactionHash) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(transactionHash);
       });
     });
   }

@@ -167,13 +167,17 @@ class SidebarPixelTab extends Component<void, Props, State> {
     const color = this.state.color || selectedPixel.color;
     const owner = selectedPixel.owner || '';
     const ownerLink = (
-      <a href={`https://rinkeby.etherscan.io/address/${owner}`}>
+      <a
+        href={`https://rinkeby.etherscan.io/address/${owner}`}
+        rel="noopener noreferrer"
+        target="_blank"
+      >
         {owner}
       </a>
     );
 
     let ownerText = selectedPixel.ownedByViewer ? (
-      <span className="Sidebar-address">
+      <span>
         <span className="Sidebar-you">You - </span>
         {ownerLink}
       </span>
@@ -225,13 +229,13 @@ class SidebarPixelTab extends Component<void, Props, State> {
         <Row className="Sidebar-row">
           <Col xs={12}>
             <div className="Sidebar-subheader">Message</div>
-            <div>{messageText}</div>
+            <pre className="Sidebar-message">{messageText}</pre>
           </Col>
         </Row>
         <Row className="Sidebar-row">
           <Col xs={12}>
             <div className="Sidebar-subheader">Owner</div>
-            <div>{ownerText}</div>
+            <div className="Sidebar-address">{ownerText}</div>
           </Col>
         </Row>
       </Grid>

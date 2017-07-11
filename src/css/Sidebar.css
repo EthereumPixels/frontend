@@ -59,6 +59,14 @@
   user-select: none;
 }
 
+.Sidebar-user-section {
+  margin-bottom: 12px;
+}
+
+.Sidebar-user-section:last-child {
+  margin-bottom: 0;
+}
+
 .Sidebar-divider {
   width: 100%;
   border-bottom: 1px solid rgba(0, 0, 0, 0.15);
@@ -66,10 +74,8 @@
 
 .Sidebar-address {
   color: rgb(240, 80, 125);
-  max-width: 80%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-size: 12px;
+  word-wrap: break-word;
 }
 
 .Sidebar-you {
@@ -95,5 +101,21 @@
 }
 
 .Sidebar-buttons {
+  margin-top: 4px;
+}
+
+.Sidebar-message {
+  background: rgba(33, 33, 33, 0.9);
+  border: 0;
+  box-shadow: none;
+  color: #fff;
+  font-family: Consolas, Menlo, Monaco, Consolas, monospace;
+  font-size: 14px;
+  margin-top: 4px;
+  padding: 4px 8px;
+}
+
+.Sidebar-message-warning {
+  font-size: 12px;
   margin-top: 4px;
 }

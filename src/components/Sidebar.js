@@ -1,6 +1,7 @@
 // @flow
 
 import type { Pixel } from '../ethereum/Pixel'
+import type { User } from '../ethereum/User'
 
 import Navigation from './Navigation'
 import React, { Component } from 'react'
@@ -8,6 +9,7 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import PropTypes from 'prop-types'
 import SidebarPixelTab from './SidebarPixelTab'
 import SidebarSimpleTab from './SidebarSimpleTab'
+import SidebarUsersTab from './SidebarUsersTab'
 
 import '../css/Sidebar.css'
 
@@ -16,6 +18,7 @@ type Props = {
   hoverPixel: ?Pixel,
   selectedPixel: ?Pixel,
   selectedSidebar: ?string,
+  users: Array<User>,
 };
 
 class Sidebar extends Component<void, Props, void> {
@@ -26,6 +29,9 @@ class Sidebar extends Component<void, Props, void> {
     switch (selectedSidebar) {
       case 'pixel':
         content = <SidebarPixelTab {...this.props} />;
+        break;
+      case 'user':
+        content = <SidebarUsersTab users={this.props.users} />;
         break;
       case null:
         break;
@@ -60,6 +66,7 @@ Sidebar.propTypes = {
   hoverPixel: PropTypes.object,
   selectedPixel: PropTypes.object,
   selectedSidebar: PropTypes.string,
+  users: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default Sidebar

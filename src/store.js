@@ -24,6 +24,7 @@ const State = Record({
   selectedPixel: null,
   selectedSidebar: null,
   sourceImage: null, // HTMLCanvasElement that contains the unmodified image
+  users: List(),
   zoom: DEFAULT_ZOOM,
 });
 
@@ -169,6 +170,9 @@ function reduce(state: State = new State(), action) {
     }
     case 'SET_IMAGE': {
       return state.merge({ sourceImage: action.image });
+    }
+    case 'SET_USERS': {
+      return state.merge({ users: action.users });
     }
     case 'ZOOM': {
       const { dy, x, y } = action;

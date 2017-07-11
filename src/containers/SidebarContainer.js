@@ -8,6 +8,7 @@ const mapStateToProps = (state) => ({
   hoverPixel: state.get('hoverPixel'),
   selectedPixel: state.get('selectedPixel') ? state.get('selectedPixel').toJS() : null,
   selectedSidebar: state.get('selectedSidebar'),
+  users: state.get('users').toJS(),
 });
 
 const SidebarContainer = connect(mapStateToProps)(Sidebar);
