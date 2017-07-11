@@ -23,3 +23,14 @@ h4:first-child {
 .transactionLink:hover {
   color: rgb(240, 80, 125);
 }
+
+.btn-primary {
+  background-color: rgb(240, 80, 125);
+  border-color: rgb(210, 60, 95);
+}
+
+.btn-primary[disabled]:hover,
+.btn-primary:hover {
+  background-color: rgb(210, 50, 96);
+  border-color: rgb(150, 30, 45);
+}
