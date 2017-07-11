@@ -7,7 +7,7 @@ import Overlay from './Overlay'
 import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import contractCaller from '../ethereum/contractCaller'
-import store from '../store'
+import store, { backgroundCanvas } from '../store'
 
 import '../css/Grid.css'
 
@@ -102,6 +102,11 @@ class Grid extends Component<void, Props, void> {
     const ctx = canvas.getContext('2d');
     ctx.imageSmoothingEnabled = false;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(
+      backgroundCanvas,
+      0, 0, gridSize, gridSize,
+      originX, originY, canvas.width * zoom, canvas.width * zoom,
+    );
     ctx.drawImage(
       this.props.sourceImage,
       0, 0, gridSize, gridSize,

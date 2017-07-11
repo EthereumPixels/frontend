@@ -52,3 +52,7 @@
   right: 0;
   bottom: 0;
 }
+
+.Overlay-color-transparent .Overlay-color {
+  display: none;
+}

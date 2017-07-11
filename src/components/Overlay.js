@@ -35,7 +35,7 @@ class Overlay extends PureComponent<void, Props, void> {
 
     return (
       <div className={className}>
-        <Checkboard size={6} />
+        <Checkboard size={8} />
         <div
           className="Overlay-color"
           style={{ backgroundColor: `#${color}` }}

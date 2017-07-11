@@ -4,13 +4,14 @@ import type { Pixel } from './ethereum/Pixel'
 
 import { List, Record } from 'immutable'
 import { createStore } from 'redux'
+import canvasHelper from './canvasHelper'
 import colorConversion from './colorConversion'
 
 import { DEFAULT_ZOOM, GRID_SIZE, MAX_ZOOM, MIN_ZOOM } from './configs'
 
 let pixelImageData;
 
-function initImage(): HTMLCanvasElement {
+function initImage(savePointer: boolean): HTMLCanvasElement {
   const canvas = document.createElement('canvas');
   canvas.height = GRID_SIZE;
   canvas.width = GRID_SIZE;
@@ -19,13 +20,15 @@ function initImage(): HTMLCanvasElement {
     throw new Error('Canvas is broken');
   }
 
-  // Create a pixel for drawing later
-  pixelImageData = ctx.createImageData(1, 1);
-
-  ctx.fillStyle = '#ffffff';
-  ctx.fillRect(0, 0, 1000, 1000);
+  if (savePointer) {
+    // Create a pixel for drawing later
+    pixelImageData = ctx.createImageData(1, 1);
+  }
   return canvas;
 }
+
+const backgroundCanvas = initImage(false);
+canvasHelper.fillCheckered(backgroundCanvas);
 
 const State = Record({
   centerX: GRID_SIZE / 2, // X coordinate of the camera center in image frame
@@ -40,7 +43,7 @@ const State = Record({
   notifications: List(),
   selectedPixel: null,
   selectedSidebar: null,
-  sourceImage: initImage(), // HTMLCanvasElement that contains the unmodified image
+  sourceImage: initImage(true), // HTMLCanvasElement that contains the unmodified image
   users: List(),
   zoom: DEFAULT_ZOOM,
 });
@@ -227,4 +230,5 @@ window.addEventListener('resize', () => store.dispatch({ type: 'RESIZE' }));
 
 store.dispatch({ type: 'RESIZE' });
 
+export { backgroundCanvas }
 export default store
