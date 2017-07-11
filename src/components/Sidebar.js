@@ -81,11 +81,11 @@ class Sidebar extends Component<void, Props, void> {
           Every Pixel in the grid is owned by an Ethereum address and has a
           set <strong>price</strong> and <strong>color</strong>. The owner of a
           Pixel may change its color at any
-          time. Other users may pay the listed price to purchase the Pixel and
-          change its color. The payment is credited to the
-          previous owner minus a small transaction fee. In addition to the web
+          time. Other users may pay the listed price to purchase a Pixel from
+          its owner and change its color. The payment is credited to the
+          owner minus a small transaction fee. In addition to the web
           UI, the underlying smart contract can also be called programmatically
-          to create complex pixel art.
+          to edit Pixels in bulk.
         </p>
 
         <p className="Sidebar-question">
@@ -102,7 +102,7 @@ class Sidebar extends Component<void, Props, void> {
         </p>
         <p>
           Every Pixel is initialized with a price of {' '}
-          <strong>0.001 ETH</strong>. The list
+          <strong>0.002 ETH</strong>. The list
           price is designed to automatically increase with every successful
           transaction at a steady <strong>25% rate</strong> of increase.
           In addition, every
