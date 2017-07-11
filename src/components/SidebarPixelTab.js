@@ -159,6 +159,7 @@ class SidebarPixelTab extends Component<void, Props, State> {
     if (!selectedPixel) {
       return (
         <SidebarSimpleTab>
+          <h4>Select a Pixel</h4>
           No Pixel selected. Click somewhere on the image to select one!
         </SidebarSimpleTab>
       );

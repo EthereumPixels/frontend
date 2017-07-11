@@ -22,8 +22,40 @@ type Props = {
 };
 
 class Sidebar extends Component<void, Props, void> {
+  _renderDisconnected(): React.Element<*> {
+    return (
+      <SidebarSimpleTab>
+        <h4>Not connected</h4>
+        <p>
+          In order to interact with this distributed application (DApp) powered
+          by the main Ethereum blockchain, you need to use {' '}
+          <a
+            href="https://metamask.io/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            MetaMask
+          </a>, the {' '}
+          <a
+            href="https://github.com/ethereum/mist/releases"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Mist browser
+          </a>, or some other web3.js-enabled browser.
+        </p>
+        <p>
+          This DApp will also attempt to connect to {' '}
+          <code>http://localhost:8545</code> if an RPC service is available
+          through <code>geth</code> or other clients, but you should manually
+          unlock your wallet if you want to perform any actions.
+        </p>
+      </SidebarSimpleTab>
+    );
+  }
+
   render() {
-    const { selectedPixel, selectedSidebar } = this.props;
+    const { connected, selectedPixel, selectedSidebar } = this.props;
 
     let content = null;
     switch (selectedSidebar) {
@@ -31,7 +63,9 @@ class Sidebar extends Component<void, Props, void> {
         content = <SidebarPixelTab {...this.props} />;
         break;
       case 'user':
-        content = <SidebarUsersTab users={this.props.users} />;
+        content = connected
+          ? <SidebarUsersTab users={this.props.users} />
+          : this._renderDisconnected();
         break;
       case null:
         break;

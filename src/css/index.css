@@ -11,6 +11,10 @@ body {
   font-family: 'Muli', sans-serif;
 }
 
+h4:first-child {
+  margin-top: 0;
+}
+
 .transactionLink {
   color: rgb(240, 80, 125);
   cursor: pointer;
