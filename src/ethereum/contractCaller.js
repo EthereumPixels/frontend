@@ -10,6 +10,12 @@ import store from '../store'
 
 import { GRID_SIZE, CONTRACT_ADDRESS } from '../configs'
 
+async function fetchCacheAsync() {
+  const response = await fetch('/cache.json');
+  const data = await response.json();
+  return data;
+}
+
 class ContractCaller {
   connected: boolean;
   contract: Object;
@@ -30,18 +36,29 @@ class ContractCaller {
       throw new Error('Invalid contract ABI');
     }
 
-    this.events = contract.allEvents({
-      fromBlock: 412133,
-      toBlock: "latest",
-    });
+    fetchCacheAsync()
+      .then(data => {
+        const { image, lastBlock, centerX, centerY } = data;
+        store.dispatch({ type: 'MOVE_TO', centerX, centerY });
+
+        const imageElem = new Image();
+        imageElem.src = image;
+        imageElem.onload = () => {
+          store.dispatch({ type: 'SET_IMAGE', image: imageElem });
+
+          this.events = contract.allEvents({
+            fromBlock: lastBlock,
+            toBlock: "latest",
+          });
+          this.pollForConnection();
+        };
+      });
 
     window.contract = contract; // for debugging
     this.connected = false;
     this.contract = contract;
     this.web3 = web3;
     this.timerID = null;
-
-    this.pollForConnection();
   }
 
   _doOnFailedConnection(): void {

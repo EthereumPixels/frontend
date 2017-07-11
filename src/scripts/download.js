@@ -58,7 +58,7 @@ function updateImage(image, blockNumber) {
       });
 
       const lastBlock = logs[logs.length - 1].blockNumber;
-      resolve({ image, blockNumber });
+      resolve({ image, blockNumber: lastBlock });
     });
   });
 }

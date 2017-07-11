@@ -10,6 +10,23 @@ import { DEFAULT_ZOOM, GRID_SIZE, MAX_ZOOM, MIN_ZOOM } from './configs'
 
 let pixelImageData;
 
+function initImage(): HTMLCanvasElement {
+  const canvas = document.createElement('canvas');
+  canvas.height = GRID_SIZE;
+  canvas.width = GRID_SIZE;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) {
+    throw new Error('Canvas is broken');
+  }
+
+  // Create a pixel for drawing later
+  pixelImageData = ctx.createImageData(1, 1);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, 1000, 1000);
+  return canvas;
+}
+
 const State = Record({
   centerX: GRID_SIZE / 2, // X coordinate of the camera center in image frame
   centerY: GRID_SIZE / 2, // Y coordinate of the camera center in image frame
@@ -23,7 +40,7 @@ const State = Record({
   notifications: List(),
   selectedPixel: null,
   selectedSidebar: null,
-  sourceImage: null, // HTMLCanvasElement that contains the unmodified image
+  sourceImage: initImage(), // HTMLCanvasElement that contains the unmodified image
   users: List(),
   zoom: DEFAULT_ZOOM,
 });
@@ -142,6 +159,10 @@ function reduce(state: State = new State(), action) {
       const centerY = currCenterY + dy / zoom;
       return state.merge({ centerX, centerY });
     }
+    case 'MOVE_TO': {
+      const { centerX, centerY } = action;
+      return state.merge({ centerX, centerY });
+    }
     case 'NAVIGATE_SIDEBAR': {
       const { sidebar } = action;
       return state.merge({ selectedSidebar: sidebar });
@@ -169,7 +190,12 @@ function reduce(state: State = new State(), action) {
       return updateDimensions(state, action.height);
     }
     case 'SET_IMAGE': {
-      return state.merge({ sourceImage: action.image });
+      const { image } = action;
+      const canvas = state.get('sourceImage');
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(image, 0, 0);
+      const nonce = state.get('nonce') + 1;
+      return state.merge({ sourceImage: canvas, nonce });
     }
     case 'SET_USERS': {
       return state.merge({ users: action.users });
@@ -199,32 +225,6 @@ const store = createStore(reduce);
 
 window.addEventListener('resize', () => store.dispatch({ type: 'RESIZE' }));
 
-// Load initial image from the server
-function loadImage() {
-  const canvas = document.createElement('canvas');
-  canvas.height = GRID_SIZE;
-  canvas.width = GRID_SIZE;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) {
-    return;
-  }
-
-  // Create a pixel for drawing later
-  pixelImageData = ctx.createImageData(1, 1);
-
-  // Load cached image from server
-  const image = new Image();
-  image.src = '/img/place.png';
-  image.onload = function() {
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, 1000, 1000);
-    ctx.drawImage(image, 0, 0);
-    store.dispatch({ type: 'SET_IMAGE', image: canvas });
-    store.dispatch({ type: 'RESIZE' });
-  };
-}
-loadImage();
-
-// store.subscribe(() => console.log(store.getState()));
+store.dispatch({ type: 'RESIZE' });
 
 export default store
