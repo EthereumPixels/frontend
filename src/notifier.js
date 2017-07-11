@@ -37,6 +37,10 @@ class Notifier {
       key,
       message: message,
       style: false,
+      onClick: () => store.dispatch({
+        type: 'REMOVE_NOTIFICATION',
+        notification: { key },
+      }),
     };
 
     store.dispatch({ type: 'ADD_NOTIFICATION', notification });
