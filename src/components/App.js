@@ -12,6 +12,10 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+        <div className="App-header">
+          <img alt="Ethereum Pixels" className="App-logo" src="/img/logo.png" />
+          Ethereum Pixels
+        </div>
         <GridContainer />
         <NotificationsContainer />
         <SidebarContainer />

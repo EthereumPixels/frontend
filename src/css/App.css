@@ -1,2 +1,20 @@
 .App {
 }
+
+.App-header {
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 32px;
+  pointer-events: none;
+  position: absolute;
+  right: 14px;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+  top: 10px;
+  z-index: 2;
+}
+
+.App-logo {
+  max-height: 32px;
+  max-width: 32px;
+}
