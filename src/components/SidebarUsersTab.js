@@ -26,6 +26,18 @@ class SidebarUsersTab extends Component<void, Props, void> {
   }
 
   render() {
+    if (this.props.users.length === 0) {
+      return (
+        <SidebarSimpleTab>
+          <h4>No connected accounts</h4>
+          <p>
+            Please connect at least one Ethereum account to view your user
+            profile.
+          </p>
+        </SidebarSimpleTab>
+      );
+    }
+
     const users = this.props.users.map((user, i) => {
       const messageText = user.message;
       const priceText = `${contractCaller.web3.fromWei(user.balance, 'ether')} ETH`;
