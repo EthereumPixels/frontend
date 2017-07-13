@@ -374,7 +374,6 @@ class ContractCaller {
         this.contract.buyPixel(
           y,
           x,
-          price * 2,
           parseInt(colorHex, 16),
           { from: user, value: price },
           callback,

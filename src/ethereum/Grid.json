@@ -2,6 +2,19 @@
   "contract_name": "Grid",
   "abi": [
     {
+      "constant": true,
+      "inputs": [],
+      "name": "incrementRate",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
       "constant": false,
       "inputs": [
         {
@@ -18,6 +31,19 @@
         }
       ],
       "name": "transferPixel",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_feeRatio",
+          "type": "uint256"
+        }
+      ],
+      "name": "setFeeRatio",
       "outputs": [],
       "payable": false,
       "type": "function"
@@ -68,6 +94,40 @@
       "constant": false,
       "inputs": [
         {
+          "name": "row",
+          "type": "uint16"
+        },
+        {
+          "name": "col",
+          "type": "uint16"
+        },
+        {
+          "name": "newColor",
+          "type": "uint24"
+        }
+      ],
+      "name": "buyPixel",
+      "outputs": [],
+      "payable": true,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_defaultPrice",
+          "type": "uint256"
+        }
+      ],
+      "name": "setDefaultPrice",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
           "name": "_admin",
           "type": "address"
         }
@@ -88,31 +148,6 @@
       "name": "setUserMessage",
       "outputs": [],
       "payable": false,
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "row",
-          "type": "uint16"
-        },
-        {
-          "name": "col",
-          "type": "uint16"
-        },
-        {
-          "name": "newPrice",
-          "type": "uint256"
-        },
-        {
-          "name": "newColor",
-          "type": "uint24"
-        }
-      ],
-      "name": "buyPixel",
-      "outputs": [],
-      "payable": true,
       "type": "function"
     },
     {
@@ -312,6 +347,10 @@
         {
           "name": "_feeRatio",
           "type": "uint256"
+        },
+        {
+          "name": "_incrementRate",
+          "type": "uint256"
         }
       ],
       "payable": false,
@@ -426,5 +465,5 @@
     }
   ],
   "schema_version": "0.0.5",
-  "updated_at": 1498955219682
+  "updated_at": 1499962466670
 }
