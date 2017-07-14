@@ -18,6 +18,8 @@ import SidebarSimpleTab from './SidebarSimpleTab'
 import contractCaller from '../ethereum/contractCaller'
 import notifier from '../notifier'
 
+import { ETHERSCAN_URL } from '../configs'
+
 import '../css/Sidebar.css'
 
 type Props = {
@@ -174,7 +176,7 @@ class SidebarPixelTab extends Component<void, Props, State> {
     const { owner, message } = selectedPixel;
     const ownerLink = owner ? (
       <a
-        href={`https://rinkeby.etherscan.io/address/${owner}`}
+        href={`${ETHERSCAN_URL}/address/${owner}`}
         rel="noopener noreferrer"
         target="_blank"
       >

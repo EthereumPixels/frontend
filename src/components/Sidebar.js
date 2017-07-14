@@ -11,6 +11,8 @@ import SidebarPixelTab from './SidebarPixelTab'
 import SidebarSimpleTab from './SidebarSimpleTab'
 import SidebarUsersTab from './SidebarUsersTab'
 
+import { CONTRACT_ADDRESS, ETHERSCAN_URL } from '../configs'
+
 import '../css/Sidebar.css'
 
 type Props = {
@@ -107,7 +109,14 @@ class Sidebar extends Component<void, Props, void> {
           transaction at a steady <strong>25% rate</strong> of increase.
           In addition, every
           action incurs the standard Ethereum gas cost. You can look at
-          some transactions on Etherscan to get a rough idea of the gas cost.
+          some transactions on {' '}
+          <a
+            href={`${ETHERSCAN_URL}/address/${CONTRACT_ADDRESS}`}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Etherscan
+          </a> to get a rough idea of the gas cost.
         </p>
 
         <p className="Sidebar-question">
@@ -127,7 +136,14 @@ class Sidebar extends Component<void, Props, void> {
         <p>
           The image displayed here is backed by the Ethereum blockchain and will
           update only when the blockchain has confirmed the transaction. You can
-          visit the Etherscan report for the smart contract and look up the
+          visit the {' '}
+          <a
+            href={`${ETHERSCAN_URL}/address/${CONTRACT_ADDRESS}`}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Etherscan
+          </a> report for the smart contract and look up the
           wallet address from which you made the transaction to see its status.
         </p>
 

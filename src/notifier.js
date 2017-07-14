@@ -4,13 +4,15 @@ import React from 'react'
 
 import store from './store'
 
+import { ETHERSCAN_URL } from './configs'
+
 function getLink(transactionHash: string): React.Element<*> {
   return (
     <a
       className="transactionLink"
       rel="noopener noreferrer"
       target="_blank"
-      href={`https://rinkeby.etherscan.io/tx/${transactionHash}`}>
+      href={`${ETHERSCAN_URL}/tx/${transactionHash}`}>
       {transactionHash}
     </a>
   );

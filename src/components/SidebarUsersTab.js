@@ -14,6 +14,8 @@ import SidebarSimpleTab from './SidebarSimpleTab'
 import contractCaller from '../ethereum/contractCaller'
 import notifier from '../notifier'
 
+import { ETHERSCAN_URL } from '../configs'
+
 type Props = {
   users: Array<User>,
 };
@@ -99,7 +101,7 @@ class SidebarUsersTab extends Component<void, Props, void> {
             <div className="Sidebar-subheader">Address</div>
             <div className="Sidebar-address">
               <a
-                href={`https://rinkeby.etherscan.io/address/${user.address}`}
+                href={`${ETHERSCAN_URL}/address/${user.address}`}
                 rel="noopener noreferrer"
                 target="_blank"
               >
