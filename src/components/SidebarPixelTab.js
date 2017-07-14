@@ -100,8 +100,10 @@ class SidebarPixelTab extends Component<void, Props, State> {
     if (!selectedPixel) {
       return null;
     }
+    const loading = !selectedPixel.owner;
     const { colorPickerExpanded, color } = this.state;
-    const buttonDisabled = colorPickerExpanded && (!connected || !color);
+    const buttonDisabled = loading ||
+      (colorPickerExpanded && (!connected || !color));
 
     let popoverTitle = null;
     let popoverText = null;
