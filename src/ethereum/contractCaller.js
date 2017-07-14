@@ -80,7 +80,7 @@ class ContractCaller {
     store.dispatch({ type: 'SET_CONNECTION', connected: true });
 
     // MetaMask needs this to work or web3.eth.accounts will be empty
-    window.setTimeout(() => this.fetchUsers(), 100);
+    window.setTimeout(() => this.fetchUsers(), 500);
 
     // Draw all past events onto the canvas before turning on notification
     // and watching for future events
