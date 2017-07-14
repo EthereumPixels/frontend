@@ -22,7 +22,7 @@ class ContractCaller {
   futureEvents: Object;
   notifyUponEvent: boolean;
   pastEvents: Object;
-  timerID: ?number;
+  selectionNonce: number;
   web3: Web3;
 
   init() {
@@ -43,7 +43,7 @@ class ContractCaller {
     this.contract = contract;
     this.notifyUponEvent = false;
     this.web3 = web3;
-    this.timerID = null;
+    this.selectionNonce = 0;
 
     fetchCacheAsync()
       .then(data => {
@@ -318,29 +318,23 @@ class ContractCaller {
       return;
     }
 
-    if (!this.connected) {
-      store.dispatch({ type: 'PIXEL_SELECT', pixel });
-      return;
-    }
+    store.dispatch({ type: 'PIXEL_SELECT', pixel, openSidebar: true });
+    this.selectionNonce += 1;
+    const nonce = this.selectionNonce;
 
-    const caller = this;
-    if (this.timerID) {
-      window.clearTimeout(this.timerID);
-    }
-    window.setTimeout(function() {
-      caller.getPixelColor(pixel).then(function(pixel) {
-        return caller.getPixelOwner(pixel);
-      }).then(function(pixel) {
-        return caller.getPixelPrice(pixel);
-      }).then(function(pixel) {
-        return caller.getUserMessage(pixel);
-      }).then(function(pixel) {
-        const owned = caller.getAccounts().includes(pixel.owner);
-        pixel.ownedByViewer = owned;
+    this.getPixelColor(pixel).then(pixel => {
+      return this.getPixelOwner(pixel);
+    }).then(pixel => {
+      return this.getPixelPrice(pixel);
+    }).then(pixel => {
+      return this.getUserMessage(pixel);
+    }).then(pixel => {
+      const owned = this.getAccounts().includes(pixel.owner);
+      pixel.ownedByViewer = owned;
+      if (this.selectionNonce === nonce) {
         store.dispatch({ type: 'PIXEL_SELECT', pixel });
-        caller.timerID = null;
-      });
-    }, 200);
+      }
+    });
   }
 
   setPixel(pixel: Pixel, colorHex: string): Promise<string> {

@@ -125,14 +125,12 @@ function reduce(state: State = new State(), action) {
       return state.merge({ sourceImage: canvas, nonce });
     }
     case 'PIXEL_SELECT': {
-      let { pixel } = action;
+      let { pixel, openSidebar } = action;
       pixel = populateCachedPixelColor(state, pixel);
 
       let selectedSidebar = state.get('selectedSidebar');
-      if (pixel) {
+      if (pixel && openSidebar) {
         selectedSidebar = 'pixel';
-      } else if (selectedSidebar === 'pixel') {
-        selectedSidebar = null;
       }
       return state.merge({ selectedPixel: pixel, selectedSidebar });
     }

@@ -165,9 +165,12 @@ class SidebarPixelTab extends Component<void, Props, State> {
       );
     }
 
+    const loading = !selectedPixel.owner;
+    const loader = <div>Loading</div>;
+
     const color = this.state.color || selectedPixel.color;
-    const owner = selectedPixel.owner || '';
-    const ownerLink = (
+    const { owner, message } = selectedPixel;
+    const ownerLink = owner ? (
       <a
         href={`https://rinkeby.etherscan.io/address/${owner}`}
         rel="noopener noreferrer"
@@ -175,7 +178,7 @@ class SidebarPixelTab extends Component<void, Props, State> {
       >
         {owner}
       </a>
-    );
+    ) : null;
 
     let ownerText = selectedPixel.ownedByViewer ? (
       <span>
@@ -183,10 +186,14 @@ class SidebarPixelTab extends Component<void, Props, State> {
         {ownerLink}
       </span>
     ) : ownerLink;
-    let messageText = selectedPixel.message
-      ? <pre className="Sidebar-message">{selectedPixel.message}</pre>
-      : 'Not set';
-    let priceText =
+    ownerText = loading ? loader : ownerText;
+
+    let messageText = loading ? loader : message;
+    messageText = messageText ? messageText : ' ';
+    messageText = (
+      <pre className="Sidebar-message">{messageText}</pre>
+    );
+    let priceText = loading ? loader :
       `${contractCaller.web3.fromWei(selectedPixel.price, 'ether')} ETH`;
 
     if (!connected) {
