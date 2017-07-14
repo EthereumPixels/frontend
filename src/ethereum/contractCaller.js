@@ -76,9 +76,8 @@ class ContractCaller {
 
   _doOnSuccessfulConnection(): void {
     this.connected = true;
-    notifier.connected();
-    store.dispatch({ type: 'SET_CONNECTION', connected: true });
     this.printNetwork();
+    store.dispatch({ type: 'SET_CONNECTION', connected: true });
 
     // MetaMask needs this to work or web3.eth.accounts will be empty
     window.setTimeout(() => this.fetchUsers(), 100);
@@ -162,19 +161,19 @@ class ContractCaller {
     this.web3.version.getNetwork((err, netId) => {
       switch (netId) {
         case '1':
-          console.log('Network: Mainnet');
+          notifier.connected('Mainnet');
           break;
         case '2':
-          console.log('Network: Morden Testnet');
+          notifier.connected('Morden');
           break;
         case '3':
-          console.log('Network: Ropsten Testnet');
+          notifier.connected('Ropsten');
           break;
         case '4':
-          console.log('Network: Rinkeby Testnet');
+          notifier.connected('Rinkeby');
           break;
         default:
-          console.log('Network: Unknown');
+          notifier.connected('Unknown');
       }
     });
   }

@@ -53,9 +53,9 @@ class Notifier {
     store.dispatch({ type: 'REMOVE_NOTIFICATION', notification });
   }
 
-  connected() {
+  connected(networkName: string) {
     this.remove({ key: 'disconnected' });
-    this.add('Connected to Ethereum network');
+    this.add(`Connected to Ethereum network (${networkName})`);
   }
 
   disconnected() {
