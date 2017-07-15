@@ -124,8 +124,8 @@ class Sidebar extends Component<void, Props, void> {
           How much does it cost?
         </p>
         <p>
-          Every Pixel is initialized with a price of {' '}
-          <strong>0.002 ETH</strong>. The list
+          Every Pixel is currently initialized with a price of {' '}
+          <strong>0.0001 ETH</strong>. The list
           price is designed to automatically increase with every successful
           transaction at a steady <strong>25% rate</strong> of increase.
           In addition, every
@@ -139,7 +139,11 @@ class Sidebar extends Component<void, Props, void> {
             Etherscan
           </a> to get a rough idea of the gas cost.
         </p>
-
+        <p>
+          Both the initial price and the rate of increase may be subjected to
+          future changes, but any Pixel that is owned at least once will
+          forever retain its listed price until it is next sold.
+        </p>
         <p className="Sidebar-question">
           Why is the gas cost so high?
         </p>
