@@ -76,6 +76,27 @@ class Sidebar extends Component<void, Props, void> {
           </a>.
         </p>
 
+        <p>
+          <strong>Verified contract address:</strong><br />
+          <a
+            className="Sidebar-address"
+            href={`${ETHERSCAN_URL}/address/${CONTRACT_ADDRESS}`}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            0xae89c8d6b98432df28242899b3688cc8e3d45ea3
+          </a>
+          <br />
+          <strong>GitHub smart contract repo:</strong><br />
+          <a
+            href="https://github.com/EthereumPixels/smart-contract"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            EthereumPixels/smart-contract
+          </a>
+        </p>
+
         <p className="Sidebar-question">
           How does it work?
         </p>
@@ -117,6 +138,33 @@ class Sidebar extends Component<void, Props, void> {
           >
             Etherscan
           </a> to get a rough idea of the gas cost.
+        </p>
+
+        <p className="Sidebar-question">
+          Why is the gas cost so high?
+        </p>
+        <p>
+          Avoid using the default gas price suggested by your wallet!
+        </p>
+        <p>
+          The
+          default on MetaMask for example is 50.0 GWei, while the network
+          minimum is only 2.0 GWei. That is a 2500% difference!
+          Here is an example Pixel purchase paying only the minimum gas price of
+          2.0 GWei that was successfully mined in less than a minute: {' '}
+          <a
+            className="Sidebar-address"
+            href={`${ETHERSCAN_URL}/tx/0x521eec032f62cb0eeda5c17afb2325e0cc2ff8f957af51da95e00846bb706781`}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            0x521eec032f62cb0eeda5c17afb2325e0cc2ff8f957af51da95e00846bb706781
+          </a>
+        </p>
+        <p>
+          A single Pixel purchase consumes roughly 150,000 gas units. It is
+          recommended that you set your limit around 200,000 to be on the safe
+          side. At a gas price of 2.0 GWei, that is roughly 0.0003 ETH or $0.05.
         </p>
 
         <p className="Sidebar-question">

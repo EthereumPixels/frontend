@@ -124,8 +124,20 @@ class SidebarPixelTab extends Component<void, Props, State> {
       if (color) {
         const price = contractCaller.web3.fromWei(selectedPixel.price, 'ether');
         popoverTitle = 'Finalize your new Pixel';
-        popoverText = `Save the selected color to the blockchain by paying
-          ${price} ETH + gas cost`;
+        popoverText = (
+          <div>
+            <p>
+              Save the selected color to the blockchain by paying {' '}
+              <strong>{price} ETH</strong> to its owner. You will be its new
+              owner.
+            </p>
+            <p>
+              The gas limit should be set to around <strong>210000</strong>
+              {' '} and using the minimum gas price of <strong>2.0 GWei</strong>
+              {' '} is perfectly fine and encouraged.
+            </p>
+        </div>)
+        ;
       } else {
         popoverTitle = 'Claim a Pixel';
         popoverText = `You can set the color by paying the amount listed above.
