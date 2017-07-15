@@ -113,6 +113,10 @@
   font-size: 14px;
   margin-top: 4px;
   padding: 4px 8px;
+  white-space: pre-line;
+  width: 328px;
+  word-break: normal;
+  word-wrap: normal;
 }
 
 .Sidebar-message-warning {

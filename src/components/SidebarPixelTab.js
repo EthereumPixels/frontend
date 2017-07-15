@@ -205,7 +205,7 @@ class SidebarPixelTab extends Component<void, Props, State> {
     ownerText = loading ? loader : ownerText;
 
     let messageText = loading ? loader : message;
-    messageText = messageText ? messageText : ' ';
+    messageText = messageText ? messageText : 'empty';
     messageText = (
       <pre className="Sidebar-message">{messageText}</pre>
     );
