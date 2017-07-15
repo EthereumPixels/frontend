@@ -1,7 +1,7 @@
 // @flow
 
 const CONTRACT_ADDRESS = '0xae89c8d6b98432df28242899b3688cc8e3d45ea3';
-const DEFAULT_ZOOM = 4.0;
+const DEFAULT_ZOOM = 8.0;
 const DEPLOYED_BLOCK = 4024924;
 const ETHERSCAN_URL = 'https://etherscan.io';
 const GRID_SIZE = 1000;
