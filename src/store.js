@@ -119,7 +119,7 @@ function reduce(state: State = new State(), action) {
       data[0] = r;
       data[1] = g;
       data[2] = b;
-      data[3] = 255;
+      data[3] = pixel.color === '000000' ? 0 : 255;
       canvas.getContext('2d').putImageData(pixelImageData, pixel.x, pixel.y);
       const nonce = state.get('nonce') + 1;
       return state.merge({ sourceImage: canvas, nonce });
