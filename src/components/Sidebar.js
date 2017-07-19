@@ -145,15 +145,15 @@ class Sidebar extends Component<void, Props, void> {
           forever retain its listed price until it is next sold.
         </p>
         <p className="Sidebar-question">
-          Why is the gas cost so high?
+          Why does the transaction take so long?
         </p>
         <p>
-          Avoid using the default gas price suggested by your wallet!
+          By default, Pixel transactions are initialized with a network minimum
+          gas price of 20 GWei. This leads to longer confirmation times usually
+          in the range of 1-3 minutes. You can increase the gas price if you
+          want it to run faster.
         </p>
         <p>
-          The
-          default on MetaMask for example is 50.0 GWei, while the network
-          minimum is only 2.0 GWei. That is a 2500% difference!
           Here is an example Pixel purchase paying only the minimum gas price of
           2.0 GWei that was successfully mined in less than a minute: {' '}
           <a

@@ -290,7 +290,7 @@ class ContractCaller {
     return new Promise((resolve, reject) => {
       this.contract.setUserMessage(
         message,
-        { from: address },
+        { from: address, gasPrice: this.web3.toWei('2', 'GWei') },
         (err, transactionHash) => {
           if (err) {
             return reject(err);
@@ -360,7 +360,7 @@ class ContractCaller {
           y,
           x,
           parseInt(colorHex, 16),
-          { from: user },
+          { from: user, gasPrice: this.web3.toWei('2', 'GWei') },
           callback,
         );
       } else {
@@ -368,7 +368,7 @@ class ContractCaller {
           y,
           x,
           parseInt(colorHex, 16),
-          { from: user, value: price },
+          { from: user, value: price, gasPrice: this.web3.toWei('2', 'GWei') },
           callback,
         );
       }
